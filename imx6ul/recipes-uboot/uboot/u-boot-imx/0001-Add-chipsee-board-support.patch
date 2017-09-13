@@ -1303,7 +1303,7 @@ index 0000000..9f7dc01
 +	"nfsroot="__stringify(CONFIG_NFSROOT)"\0"\
 +	"script=boot.scr\0" \
 +	"splashpos=m,m\0" \
-+	"image=zImage-mx6ul\0" \
++	"image=zImage\0" \
 +	"console=ttymxc0\0" \
 +	"fdt_high=0xffffffff\0" \
 +	"initrd_high=0xffffffff\0" \
