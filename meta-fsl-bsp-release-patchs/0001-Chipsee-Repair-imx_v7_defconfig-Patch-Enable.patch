@@ -1,0 +1,25 @@
+From 4813c87ee095c4affe2efc3f6c0433f5533808a3 Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Thu, 14 Sep 2017 10:32:14 +0800
+Subject: [PATCH] Chipsee Repair imx_v7_defconfig Patch Enable
+
+---
+ imx/meta-bsp/recipes-kernel/linux/linux-imx_3.14.52.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/imx/meta-bsp/recipes-kernel/linux/linux-imx_3.14.52.bb b/imx/meta-bsp/recipes-kernel/linux/linux-imx_3.14.52.bb
+index c041f65..ab6416a 100644
+--- a/imx/meta-bsp/recipes-kernel/linux/linux-imx_3.14.52.bb
++++ b/imx/meta-bsp/recipes-kernel/linux/linux-imx_3.14.52.bb
+@@ -18,7 +18,7 @@ SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
+ 
+ DEFAULT_PREFERENCE = "1"
+ 
+-addtask copy_defconfig after do_unpack before do_configure
++addtask copy_defconfig after do_patch before do_configure
+ do_copy_defconfig () {
+     # copy latest imx_v7_defconfig to use
+     cp ${S}/arch/arm/configs/imx_v7_defconfig ${B}/.config
+-- 
+1.9.1
+
