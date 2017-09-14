@@ -14,8 +14,8 @@ Repair meta-fsl-bsp-release enable the imx_v7_defconfig patch.
 2. git clone https://github.com/leavs/meta-work.git
 3. add bblayers to <build_dir>/conf/bblayers.conf
 
-For imx6ul
+For imx6ul \
 BBLAYERS = " \
-	.....
+	..... \
 	${BSPDIR}/sources/meta-work/imx6ul \
 "
