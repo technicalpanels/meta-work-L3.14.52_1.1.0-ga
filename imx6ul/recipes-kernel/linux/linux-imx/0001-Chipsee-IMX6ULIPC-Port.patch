@@ -1,12 +1,12 @@
-From 4e4803b3291422723e5136307d32a3e1066a63fd Mon Sep 17 00:00:00 2001
+From c67f0612e6083b9f3883ed66e373340d5cad0178 Mon Sep 17 00:00:00 2001
 From: leavs <leavs_o@126.com>
-Date: Thu, 14 Sep 2017 14:04:47 +0800
-Subject: [PATCH] Add Chipsee IMX6ULIPC Support
+Date: Fri, 15 Sep 2017 13:49:48 +0800
+Subject: [PATCH] Chipsee IMX6ULIPC Port
 
 ---
  arch/arm/boot/dts/Makefile                        |    2 +
  arch/arm/boot/dts/mx6ulipc-1g.dts                 |   11 +
- arch/arm/boot/dts/mx6ulipc.dts                    |  634 ++++
+ arch/arm/boot/dts/mx6ulipc.dts                    |  635 ++++
  arch/arm/configs/imx_v7_defconfig                 |   13 +-
  drivers/iio/humidity/Kconfig                      |   12 +
  drivers/iio/humidity/Makefile                     |    1 +
@@ -29,8 +29,8 @@ Subject: [PATCH] Add Chipsee IMX6ULIPC Support
  drivers/input/touchscreen/goodix/gt9xx.h          |  322 ++
  drivers/input/touchscreen/goodix/gt9xx_firmware.h | 2338 +++++++++++++
  drivers/input/touchscreen/goodix/gt9xx_update.c   | 3624 +++++++++++++++++++++
- sound/soc/fsl/imx-wm8960.c                        |   58 +-
- 26 files changed, 19165 insertions(+), 10 deletions(-)
+ sound/soc/fsl/imx-wm8960.c                        |   20 +-
+ 26 files changed, 19128 insertions(+), 10 deletions(-)
  create mode 100644 arch/arm/boot/dts/mx6ulipc-1g.dts
  create mode 100644 arch/arm/boot/dts/mx6ulipc.dts
  mode change 100644 => 100755 arch/arm/configs/imx_v7_defconfig
@@ -84,10 +84,10 @@ index 0000000..9d84fbb
 +};
 diff --git a/arch/arm/boot/dts/mx6ulipc.dts b/arch/arm/boot/dts/mx6ulipc.dts
 new file mode 100644
-index 0000000..bad5d92f7
+index 0000000..5a2a33a
 --- /dev/null
 +++ b/arch/arm/boot/dts/mx6ulipc.dts
-@@ -0,0 +1,634 @@
+@@ -0,0 +1,635 @@
 +/*
 + * Chipsee Information Technology Co., Ltd.
 + * http://www.chipsee.com
@@ -139,17 +139,18 @@ index 0000000..bad5d92f7
 +		asrc-controller = <&asrc>;
 +		codec-master;
 +		gpr = <&gpr>;
++
 +		/*
-+         * hp-det = <hp-det-pin hp-det-polarity>;
++ 	         * hp-det = <hp-det-pin hp-det-polarity>;
 +		 * hp-det-pin: JD1 JD2  or JD3
 +		 * hp-det-polarity = 0: hp detect high for headphone
 +		 * hp-det-polarity = 1: hp detect high for speaker
 +		 *
 +		 * hp-det = <3 0>;
 +		 * hp-det-gpios = <&gpio5 4 0>;	// 0 is flags <gpio5 4> is gpio num 132
++		 *
 +		 */
-+		hp-det = <3 1>;
-+		hp-status = <1>;	// 0-Ext_Spk 1-Headphone
++
 +		audio-routing =
 +			"Headset Jack", "HP_L",
 +			"Headset Jack", "HP_R",
@@ -19365,178 +19366,78 @@ index 0000000..4a9c81c
 +
 +//**************** For GT9XXF End ********************//
 diff --git a/sound/soc/fsl/imx-wm8960.c b/sound/soc/fsl/imx-wm8960.c
-index 0406d67..245049c 100644
+index 0406d67..89bbb93 100644
 --- a/sound/soc/fsl/imx-wm8960.c
 +++ b/sound/soc/fsl/imx-wm8960.c
-@@ -28,6 +28,13 @@
+@@ -27,6 +27,7 @@
+ #include "fsl_sai.h"
  
  #define DAI_NAME_SIZE	32
- 
-+/*
-+ * For Chipsee Patched NO_HP_DET_GPIO, Use USE_MAIN_MIC Only
-+ */
-+
 +#define NO_HP_DET_GPIO
-+#define USE_MAIN_MIC
-+
+ 
  struct imx_wm8960_data {
  	struct snd_soc_card card;
- 	char codec_dai_name[DAI_NAME_SIZE];
-@@ -76,10 +83,14 @@ static int hp_set_status_check(void)
- 	char *envp[3], *buf;
- 	int hp_status, ret;
+@@ -209,6 +210,7 @@ static void wm8960_init(struct snd_soc_dai *codec_dai)
+ 	struct snd_soc_card *card = codec_dai->card;
+ 	struct imx_wm8960_data *data = snd_soc_card_get_drvdata(card);
  
 +#ifndef NO_HP_DET_GPIO
- 	if (!gpio_is_valid(priv->hp_set_gpio))
- 		return 0;
- 
- 	hp_status = gpio_get_value(priv->hp_set_gpio) ? 1 : 0;
+ 	/*
+ 	 * codec ADCLRC pin configured as GPIO, DACLRC pin is used as a frame
+ 	 * clock for ADCs and DACs
+@@ -232,6 +234,14 @@ static void wm8960_init(struct snd_soc_dai *codec_dai)
+ 	 * route left channel to right channel in default.
+ 	 */
+ 	snd_soc_update_bits(codec, WM8960_ADDCTL1, 3<<2, 1<<2);
 +#else
-+	of_property_read_u32_array(pdev->dev.of_node, "hp-status", &hp_status, 1);	// Get hp_status from DTS 1-Headphone 0-Ext_SPK.
++	/*
++	 * we use RINPUT2 as MIC, only connect the input for right channel,
++	 * we need to route it for left channel. 
++	 */
++	snd_soc_update_bits(codec, WM8960_ADDCTL1, 3<<2, 2<<2);	
 +#endif
- 	buf = kmalloc(32, GFP_ATOMIC);
- 	if (!buf) {
- 		dev_err(&pdev->dev, "%s kmalloc failed\n", __func__);
-@@ -89,9 +100,13 @@ static int hp_set_status_check(void)
- 	if (hp_status != priv->hp_active_low) {
- 		snprintf(buf, 32, "STATE=%d", 2);
- 		snd_soc_dapm_disable_pin(&priv->codec->dapm, "Ext Spk");
-+#ifndef USE_MAIN_MIC
- 		snd_soc_dapm_disable_pin(&priv->codec->dapm, "Main MIC");
-+#else
-+		snd_soc_dapm_enable_pin(&priv->codec->dapm, "Main MIC");
-+#endif
- 		ret = imx_hp_set_gpio.report;
--
-+#ifndef USE_MAIN_MIC
- 		/*
- 		 *  As the hp MIC only connect the input for left channel, we
- 		 *  need to route it for right channel.
-@@ -99,10 +114,21 @@ static int hp_set_status_check(void)
- 		snd_soc_update_bits(priv->codec, WM8960_ADDCTL1, 3<<2, 1<<2);
- 
- 		snd_kctl_jack_report(priv->snd_card, priv->headset_kctl, 1);
-+#else
-+		/*
-+		 *  As the Main MIC only connect the input for right channel,
-+		 *  we need to route it for left channel.
-+		 */
-+		snd_soc_update_bits(priv->codec, WM8960_ADDCTL1, 3<<2, 2<<2);
 +
-+		snd_kctl_jack_report(priv->snd_card, priv->headset_kctl, 0);
-+#endif
-+	
- 	} else {
- 		snprintf(buf, 32, "STATE=%d", 0);
- 		snd_soc_dapm_enable_pin(&priv->codec->dapm, "Ext Spk");
- 		snd_soc_dapm_enable_pin(&priv->codec->dapm, "Main MIC");
-+		
- 		ret = 0;
- 
- 		/*
-@@ -138,8 +164,10 @@ static int imx_wm8960_gpio_init(struct snd_soc_card *card)
- 	int ret;
- 	priv->codec = codec;
- 
-+#ifndef NO_HP_DET_GPIO
- 	if (gpio_is_valid(priv->hp_set_gpio)) {
- 		imx_hp_set_gpio.gpio = priv->hp_set_gpio;
-+#endif
- 		imx_hp_set_gpio.jack_status_check = hp_set_status_check;
- 
- 		ret = snd_soc_jack_new(codec, "Headset Jack",
-@@ -150,11 +178,14 @@ static int imx_wm8960_gpio_init(struct snd_soc_card *card)
- 			ARRAY_SIZE(imx_hp_set_pins), imx_hp_set_pins);
- 		if (ret)
- 			return ret;
-+
- 		ret = snd_soc_jack_add_gpios(&imx_hp_set, 1,
- 						&imx_hp_set_gpio);
- 		if (ret)
- 			return ret;
-+#ifndef NO_HP_DET_GPIO
- 	}
-+#endif
- 
- 	return 0;
  }
-@@ -164,13 +195,20 @@ static ssize_t show_headphone(struct device_driver *dev, char *buf)
- 	struct imx_priv *priv = &card_priv;
- 	int hp_status;
  
-+#ifndef NO_HP_DET_GPIO
- 	if (!gpio_is_valid(priv->hp_set_gpio)) {
- 		strcpy(buf, "no detect gpio connected\n");
- 		return strlen(buf);
+ /* -1 for reserved value */
+@@ -574,7 +584,9 @@ static int imx_wm8960_probe(struct platform_device *pdev)
+ 		}
  	}
-+#endif
- 
- 	/* Check if headphone is plugged in */
-+#ifndef NO_HP_DET_GPIO
- 	hp_status = gpio_get_value(priv->hp_set_gpio) ? 1 : 0;
-+#else
-+	struct platform_device *pdev = priv->pdev;
-+	of_property_read_u32_array(pdev->dev.of_node, "hp-status", &hp_status, 1);	// Get hp_status from DTS 1-Headphone 0-Ext_SPK.
-+#endif
- 
- 	if (hp_status != priv->hp_active_low)
- 		strcpy(buf, "Headphone\n");
-@@ -185,13 +223,20 @@ static ssize_t show_micphone(struct device_driver *dev, char *buf)
- 	struct imx_priv *priv = &card_priv;
- 	int hp_status;
  
 +#ifndef NO_HP_DET_GPIO
- 	if (!gpio_is_valid(priv->hp_set_gpio)) {
- 		strcpy(buf, "no detect gpio connected\n");
- 		return strlen(buf);
+ 	of_property_read_u32_array(pdev->dev.of_node, "hp-det", data->hp_det, 2);
++#endif
+ 
+ 	asrc_np = of_parse_phandle(pdev->dev.of_node, "asrc-controller", 0);
+ 	if (asrc_np) {
+@@ -640,17 +652,20 @@ static int imx_wm8960_probe(struct platform_device *pdev)
  	}
-+#endif
- 
- 	/* Check if headphone is plugged in */
-+#ifndef NO_HP_DET_GPIO
- 	hp_status = gpio_get_value(priv->hp_set_gpio) ? 1 : 0;
-+#else
-+	struct platform_device *pdev = priv->pdev;
-+	of_property_read_u32_array(pdev->dev.of_node, "hp-status", &hp_status, 1);	// Get hp_status from DTS 1-Headphone 0-Ext_SPK.
-+#endif
- 
- 	if (hp_status != priv->hp_active_low)
- 		strcpy(buf, "Hp MIC\n");
-@@ -641,11 +686,15 @@ static int imx_wm8960_probe(struct platform_device *pdev)
  
  	priv->snd_card = data->card.snd_card;
- 
+-
++	
 +#ifndef NO_HP_DET_GPIO
  	priv->hp_set_gpio = of_get_named_gpio_flags(pdev->dev.of_node, "hp-det-gpios", 0,
  			(enum of_gpio_flags *)&priv->hp_active_low);
  	if (IS_ERR(ERR_PTR(priv->hp_set_gpio)))
  		goto fail;
--
-+#else
-+	priv->hp_active_low = 0;
 +#endif
-+	
+ 
  	priv->headset_kctl = snd_kctl_jack_new("Headset", 0, NULL);
  	ret = snd_ctl_add(data->card.snd_card, priv->headset_kctl);
  	if (ret)
-@@ -653,7 +702,9 @@ static int imx_wm8960_probe(struct platform_device *pdev)
- 
+ 		goto fail;
+-
++		
++#ifndef NO_HP_DET_GPIO
  	ret = imx_wm8960_gpio_init(&data->card);
  
-+#ifndef NO_HP_DET_GPIO
  	if (gpio_is_valid(priv->hp_set_gpio)) {
-+#endif
- 		ret = driver_create_file(pdev->dev.driver, &driver_attr_headphone);
- 		if (ret) {
- 			dev_err(&pdev->dev, "create hp attr failed (%d)\n", ret);
-@@ -664,7 +715,10 @@ static int imx_wm8960_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev, "create mic attr failed (%d)\n", ret);
+@@ -665,6 +680,7 @@ static int imx_wm8960_probe(struct platform_device *pdev)
  			goto fail;
  		}
-+#ifndef NO_HP_DET_GPIO
  	}
 +#endif
-+
  fail:
  	if (cpu_np)
  		of_node_put(cpu_np);
