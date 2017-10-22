@@ -1,0 +1,5 @@
+KERNEL_DEVICETREE = mx6ulipc.dtb mx6ulipc-1g.dtb
+
+Modify the dtb filename to mx6ulipc.dtb mx6ulipc-1g.dtb.
+When do this, you can find the dtbfile in sdcard image is
+mx6ulipc.dtb mx6ulipc-1g.dtb

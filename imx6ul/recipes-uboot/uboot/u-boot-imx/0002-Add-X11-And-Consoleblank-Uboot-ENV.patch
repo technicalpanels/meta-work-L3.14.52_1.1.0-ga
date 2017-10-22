@@ -1,0 +1,42 @@
+From 58f0c558ed0ec16297b1d1e90c60d37202bdcf59 Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Sun, 22 Oct 2017 16:21:59 +0800
+Subject: [PATCH] Add X11 And Consoleblank Uboot ENV
+
+---
+ include/configs/mx6ulipc.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/include/configs/mx6ulipc.h b/include/configs/mx6ulipc.h
+index 9492255..a6d9d04 100644
+--- a/include/configs/mx6ulipc.h
++++ b/include/configs/mx6ulipc.h
+@@ -170,6 +170,7 @@
+ 	"script=boot.scr\0" \
+ 	"splashpos=m,m\0" \
+ 	"image=zImage\0" \
++	"x11=false\0" \
+ 	"console=ttymxc0\0" \
+ 	"fdt_high=0xffffffff\0" \
+ 	"initrd_high=0xffffffff\0" \
+@@ -183,7 +184,7 @@
+ 	"mmcautodetect=yes\0" \
+ 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
+ 	    CONFIG_BOOTARGS_CMA_SIZE \
+-		"root=${mmcroot}\0" \
++		"root=${mmcroot} x11=${x11} consoleblank=0\0" \
+ 	"loadbootscript=" \
+ 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
+ 	"bootscript=echo Running bootscript from mmc ...; " \
+@@ -208,7 +209,7 @@
+ 	"netargs=setenv bootargs console=${console},${baudrate} " \
+ 	    CONFIG_BOOTARGS_CMA_SIZE \
+ 		"root=/dev/nfs " \
+-	"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
++	"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp x11=${x11}\0" \
+ 	"netboot=echo Booting from net ...; " \
+ 		"run netargs; " \
+ 		"if test ${ip_dyn} = yes; then " \
+-- 
+1.9.1
+
