@@ -624,7 +624,7 @@ index 0000000..c540d5c
 +	.depth = 24,
 +	.enable	= do_enable_parallel_lcd,
 +	.mode	= {
-+		.name			= "TFT43AB",
++		.name		= "TFT43AB",
 +		.xres           = 480,
 +		.yres           = 272,
 +		.pixclock       = 108695,
@@ -641,7 +641,7 @@ index 0000000..c540d5c
 +	.depth = 24,
 +	.enable	= do_enable_parallel_lcd,
 +	.mode	= {
-+		.name			= "AT070",
++		.name		= "AT070",
 +		.xres           = 800,
 +		.yres           = 480,
 +		.pixclock       = 108695,
@@ -661,13 +661,13 @@ index 0000000..c540d5c
 +		.name		= "TT70WS",
 +		.xres           = 1024,
 +		.yres           = 600,
-+		.pixclock       = 23809,
-+		.right_margin   = 70,
-+		.left_margin    = 10,
++		.pixclock       = 23584,
++		.right_margin   = 44,
++		.left_margin    = 44,
 +		.hsync_len      = 2,
-+		.lower_margin   = 22,
-+		.upper_margin   = 12,
-+		.vsync_len      = 2,
++		.lower_margin   = 15,
++		.upper_margin   = 15,
++		.vsync_len      = 5,
 +		.sync           = 0,
 +		.vmode          = FB_VMODE_NONINTERLACED
 +} } };
