@@ -1,0 +1,30 @@
+From 55afb894cd873f240141dc9eb712f27dc55b96ea Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Sun, 19 Nov 2017 11:51:01 +0800
+Subject: [PATCH] Repair GT9XX Touchscreen Reset Issue
+
+---
+ drivers/input/touchscreen/goodix/gt9xx.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/input/touchscreen/goodix/gt9xx.c b/drivers/input/touchscreen/goodix/gt9xx.c
+index 3504154..2225d3b 100644
+--- a/drivers/input/touchscreen/goodix/gt9xx.c
++++ b/drivers/input/touchscreen/goodix/gt9xx.c
+@@ -2492,12 +2492,7 @@ static int goodix_ts_probe(struct i2c_client *client, const struct i2c_device_id
+     ret = gtp_i2c_test(client);
+     if (ret < 0)
+     {
+-		GTP_GPIO_FREE(gtp_rst_gpio);
+-        GTP_GPIO_FREE(gtp_int_gpio);
+-		i2c_set_clientdata(client, NULL);
+-		kfree(ts);
+-		GTP_ERROR("I2C communication ERROR! Exit Probe");
+-		return -ENODEV;
++	GTP_ERROR("I2C communication ERROR! Exit Probe");
+     }
+ 
+     ret = gtp_read_version(client, &version_info);
+-- 
+1.9.1
+

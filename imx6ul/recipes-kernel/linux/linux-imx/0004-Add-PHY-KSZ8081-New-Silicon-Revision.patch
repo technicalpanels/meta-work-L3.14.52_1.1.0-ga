@@ -1,0 +1,41 @@
+From cb932e1773b8970c52d78d95c0761a9064056685 Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Fri, 22 Dec 2017 14:42:59 +0800
+Subject: [PATCH] Add PHY KSZ8081 New Silicon Revision
+
+---
+ arch/arm/mach-imx/mach-imx6ul.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
+index 4accb3a..c3c04fc 100644
+--- a/arch/arm/mach-imx/mach-imx6ul.c
++++ b/arch/arm/mach-imx/mach-imx6ul.c
+@@ -51,10 +51,22 @@ static int ksz8081_phy_fixup(struct phy_device *dev)
+ 	return 0;
+ }
+ 
+-#define PHY_ID_KSZ8081	0x00221560
++/*
++ * i.MX6UL EVK board RevA, RevB, RevC all use KSZ8081
++ * Silicon revision 00, the PHY ID is 0x00221560, pass our
++ * test with the phy fixup.
++ */
++#define PHY_ID_KSZ8081_MNRN60	0x00221560
++/*
++ * i.MX6UL EVK board RevC1 board use KSZ8081
++ * Silicon revision 01, the PHY ID is 0x00221561.
++ * This silicon revision still need the phy fixup setting.
++ */
++#define PHY_ID_KSZ8081_MNRN61	0x00221561
+ static void __init imx6ul_enet_phy_init(void)
+ {
+-	phy_register_fixup_for_uid(PHY_ID_KSZ8081, 0xffffffff,	ksz8081_phy_fixup);
++	phy_register_fixup(PHY_ANY_ID, PHY_ID_KSZ8081_MNRN60, 0xffffffff, ksz8081_phy_fixup);
++	phy_register_fixup(PHY_ANY_ID, PHY_ID_KSZ8081_MNRN61, 0xffffffff, ksz8081_phy_fixup);
+ }
+ 
+ static inline void imx6ul_enet_init(void)
+-- 
+1.9.1
+
