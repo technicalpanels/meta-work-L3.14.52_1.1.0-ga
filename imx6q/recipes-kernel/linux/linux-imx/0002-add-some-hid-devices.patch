@@ -1,0 +1,50 @@
+From e90a4b14b5e9bbda7056bfdf53493a9482f24dcc Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Wed, 7 Feb 2018 17:50:25 +0800
+Subject: [PATCH 2/4] add some hid devices
+
+
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index d92c7d9..c5036a4 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -1612,6 +1612,7 @@ EXPORT_SYMBOL_GPL(hid_disconnect);
+  * used as a driver. See hid_scan_report().
+  */
+ static const struct hid_device_id hid_have_special_driver[] = {
++	{ HID_USB_DEVICE(USB_VENDOR_ID_SIW, USB_DEVICE_ID_SW3711) },/*Siliconworks*/
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_A4TECH, USB_DEVICE_ID_A4TECH_WCP32PU) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_A4TECH, USB_DEVICE_ID_A4TECH_X5_005D) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_A4TECH, USB_DEVICE_ID_A4TECH_RP_649) },
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 4850da3..80ecd31 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -22,6 +22,9 @@
+ #define USB_DEVICE_ID_3M2256		0x0502
+ #define USB_DEVICE_ID_3M3266		0x0506
+ 
++#define USB_VENDOR_ID_SIW		0x29BD
++#define USB_DEVICE_ID_SW3711		0x4101
++
+ #define USB_VENDOR_ID_A4TECH		0x09da
+ #define USB_DEVICE_ID_A4TECH_WCP32PU	0x0006
+ #define USB_DEVICE_ID_A4TECH_X5_005D	0x000a
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 221d503..ad83f2c 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1036,6 +1036,10 @@ static void mt_remove(struct hid_device *hdev)
+ 
+ static const struct hid_device_id mt_devices[] = {
+ 
++	/* Siliconworks panels */
++	{ .driver_data = MT_CLS_DEFAULT,
++		HID_USB_DEVICE(USB_VENDOR_ID_SIW,
++			USB_DEVICE_ID_SW3711) },
+ 	/* 3M panels */
+ 	{ .driver_data = MT_CLS_3M,
+ 		MT_USB_DEVICE(USB_VENDOR_ID_3M,
+-- 
+1.9.1
+

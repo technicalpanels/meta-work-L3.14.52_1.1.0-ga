@@ -1,0 +1,12 @@
+OpenEmbedded/Yocto layer for Chipsee's images
+=============================================================
+
+This layer provides support for Chipsee's images for
+use with OpenEmbedded and/or Yocto Chipsee's BSP layer.
+
+Contributing
+------------
+
+Source code:
+
+    https://github.com/leavs/meta-work/imx6q

@@ -4,9 +4,14 @@ Board Support
 # imx6ul
 imx6ul platform support
 
+# imx6q
+imx6q platform support
+
+
 # meta-fsl-bsp-release-patchs
 Repair meta-fsl-bsp-release enable the imx_v7_defconfig patch.
 0001-Chipsee-Repair-imx_v7_defconfig-Patch-Enable.patch
+This patch need be copied to sources/meta-fsl-bsp-release directory and git apply it.
 
 # Use Guide
 
