@@ -7,20 +7,20 @@ imx6ul platform support
 # imx6q
 imx6q platform support
 
-
 # meta-fsl-bsp-release-patchs
-Repair meta-fsl-bsp-release enable the imx_v7_defconfig patch.
-0001-Chipsee-Repair-imx_v7_defconfig-Patch-Enable.patch
-This patch need be copied to sources/meta-fsl-bsp-release directory and git apply it.
+addtask copy_defconfig after do_patch before do_configure
+
 
 # Use Guide
 
-1. cd <BSPDIR>/sources/
-2. git clone https://github.com/leavs/meta-work.git
-3. add bblayers to <build_dir>/conf/bblayers.conf
+1. cp 0001-Chipsee-Repair-imx_v7_defconfig-Patch-Enable.patch <BSPDIR>/sources/meta-fsl-bsp-release/
+2. git apply 0001-Chipsee-Repair-imx_v7_defconfig-Patch-Enable.patch
+3. cd <BSPDIR>/sources/
+4. git clone https://github.com/leavs/meta-work.git
+5. add meta-work bblayers to <BUILDDIR>/conf/bblayers.conf, like follow:
 
-For imx6ul \
-BBLAYERS = " \
-	..... \
-	${BSPDIR}/sources/meta-work/imx6ul \
-"
+    For imx6ul \
+    BBLAYERS = " \
+    	    ..... \
+	    ${BSPDIR}/sources/meta-work/imx6ul \
+    "
