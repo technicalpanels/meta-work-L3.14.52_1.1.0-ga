@@ -5,5 +5,6 @@ SRC_URI +="file://0001-keep-logo-from-uboot-to-kernel.patch \
 	   file://0003-add-ft-and-gt-touchscreen-support.patch \
 	   file://0004-add-asix-usb-net-and-rtl8723bs-wifi-support.patch \
 	   file://0005-support-7ft-device.patch \
+	   file://0006-Repair-watchdog-and-add-7-gt911-dtsi.patch \
 "
 KERNEL_DEVICETREE +="imx6q-sabresd-logo-lvds-ipu1-di0.dtb"
