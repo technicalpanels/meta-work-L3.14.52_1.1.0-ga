@@ -1,0 +1,38 @@
+From dcaf10661ce2958595a897dc81ecdbc1000c272e Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Mon, 14 May 2018 13:28:50 +0800
+Subject: [PATCH 1/2] fix led dts
+
+---
+ arch/arm/boot/dts/imx6qdl-eisd.dtsi | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6qdl-eisd.dtsi b/arch/arm/boot/dts/imx6qdl-eisd.dtsi
+index cd62e23..742a6fc 100644
+--- a/arch/arm/boot/dts/imx6qdl-eisd.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-eisd.dtsi
+@@ -48,15 +48,17 @@
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+-		led4 {
+-			label = "led4";
++		orange {
++			label = "led0";
+ 			gpios = <&gpio3 21 0>;
++			linux,default-trigger = "mmc3";
+ 			default-state = "off";
+ 		};
+ 
+-		led5 {
+-			label = "led5";
++		blue {
++			label = "led1";
+ 			gpios = <&gpio3 22 0>;
++			linux,default-trigger = "heartbeat";
+ 			default-state = "off";
+ 		};
+ 		
+-- 
+1.9.1
+

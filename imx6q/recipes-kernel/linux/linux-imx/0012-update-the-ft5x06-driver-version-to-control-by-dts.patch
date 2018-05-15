@@ -1,0 +1,212 @@
+From 92b4ae3902b9a09793e4a30a2f83fe94afe374d8 Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Mon, 14 May 2018 15:31:40 +0800
+Subject: [PATCH 2/2] update the ft5x06 driver version to control by dts
+
+---
+ arch/arm/boot/dts/imx6dl-eisd-1024600.dts |  1 +
+ arch/arm/boot/dts/imx6dl-eisd-1280800.dts |  1 +
+ arch/arm/boot/dts/imx6q-eisd-1024600.dts  |  1 +
+ arch/arm/boot/dts/imx6q-eisd-1280800.dts  |  1 +
+ drivers/input/touchscreen/ft5x06_ts.c     | 69 ++++++++++++++++++++++---------
+ 5 files changed, 53 insertions(+), 20 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6dl-eisd-1024600.dts b/arch/arm/boot/dts/imx6dl-eisd-1024600.dts
+index 7f4f375..97523e3 100644
+--- a/arch/arm/boot/dts/imx6dl-eisd-1024600.dts
++++ b/arch/arm/boot/dts/imx6dl-eisd-1024600.dts
+@@ -16,5 +16,6 @@
+                 interrupt-parent = <&gpio1>;
+                 interrupts = <9 2>;
+                 wakeup-gpios = <&gpio1 9 1>;
++		version = <5306>;
+         };
+ };
+diff --git a/arch/arm/boot/dts/imx6dl-eisd-1280800.dts b/arch/arm/boot/dts/imx6dl-eisd-1280800.dts
+index bc7807b..67da6b4 100644
+--- a/arch/arm/boot/dts/imx6dl-eisd-1280800.dts
++++ b/arch/arm/boot/dts/imx6dl-eisd-1280800.dts
+@@ -16,5 +16,6 @@
+                 interrupt-parent = <&gpio1>;
+                 interrupts = <9 2>;
+                 wakeup-gpios = <&gpio1 9 1>;
++		version = <5526>;
+         };
+ };
+diff --git a/arch/arm/boot/dts/imx6q-eisd-1024600.dts b/arch/arm/boot/dts/imx6q-eisd-1024600.dts
+index 242ece4..caee974 100644
+--- a/arch/arm/boot/dts/imx6q-eisd-1024600.dts
++++ b/arch/arm/boot/dts/imx6q-eisd-1024600.dts
+@@ -16,5 +16,6 @@
+                 interrupt-parent = <&gpio1>;
+                 interrupts = <9 2>;
+                 wakeup-gpios = <&gpio1 9 1>;
++		version = <5306>;
+         };
+ };
+diff --git a/arch/arm/boot/dts/imx6q-eisd-1280800.dts b/arch/arm/boot/dts/imx6q-eisd-1280800.dts
+index d71e305..e07f352 100644
+--- a/arch/arm/boot/dts/imx6q-eisd-1280800.dts
++++ b/arch/arm/boot/dts/imx6q-eisd-1280800.dts
+@@ -16,5 +16,6 @@
+                 interrupt-parent = <&gpio1>;
+                 interrupts = <9 2>;
+                 wakeup-gpios = <&gpio1 9 1>;
++		version = <5526>;
+         };
+ };
+diff --git a/drivers/input/touchscreen/ft5x06_ts.c b/drivers/input/touchscreen/ft5x06_ts.c
+index feb2c71..388a878 100644
+--- a/drivers/input/touchscreen/ft5x06_ts.c
++++ b/drivers/input/touchscreen/ft5x06_ts.c
+@@ -40,17 +40,20 @@
+ #define USE_ABS_SINGLE
+ #define USE_ABS_MT
+ #endif
++
++#if 0
+ // For 5"
+ //#define FT5206
+ //#define FT5416
+ 
+ // For 7"
+-#define FT5306
++//#define FT5306
+ //#define FT5306_800480
+ 
+ // For 10"  FT5X06 == FT5506
+ //#define FT5X06
+ //#define FT5526
++#endif
+ 
+ //#define DEBUG
+ 
+@@ -115,6 +118,7 @@ struct ft5x06_ts {
+ 	unsigned		down_mask;
+ 	unsigned		max_x;
+ 	unsigned		max_y;
++	unsigned		version;
+ };
+ static const char *client_name = "ft5x06";
+ 
+@@ -189,22 +193,29 @@ static inline void ts_evt_add(struct ft5x06_ts *ts,
+ 			input_mt_slot(idev, p[i].id);
+ 			input_mt_report_slot_state(idev,  MT_TOOL_FINGER, 1);
+ 			down_mask |= 1 << p[i].id;
+-#ifdef FT5206
++/*#ifdef FT5206*/
++			if (ts->version == 5206) {
++			
+ 			input_report_abs(idev, ABS_MT_POSITION_X, ts->max_x - p[i].y); //p[i].x	leavs patched for FT5206
+ 			input_report_abs(idev, ABS_MT_POSITION_Y, ts->max_y - p[i].x); //p[i].y	leavs patched for FT5206
+-#elif defined FT5306
++			} else if (ts->version == 5306) {
++/*#elif defined FT5306*/
+ 			input_report_abs(idev, ABS_MT_POSITION_X, ts->max_x - p[i].y); //p[i].x	leavs patched for FT5306
+ 			input_report_abs(idev, ABS_MT_POSITION_Y, ts->max_y - p[i].x*600/768); //p[i].y leavs patched for FT5306
+-#elif defined FT5306_800480
++			} else if (ts->version == 53060) {
++/*#elif defined FT5306_800480*/
+ 			input_report_abs(idev, ABS_MT_POSITION_X, ts->max_x - p[i].y*800/1024);
+ 			input_report_abs(idev, ABS_MT_POSITION_Y, ts->max_y - p[i].x*480/768); 
+-#elif defined FT5526
++			} else if (ts->version == 5526) {
++/*#elif defined FT5526*/
+ 			input_report_abs(idev, ABS_MT_POSITION_X, p[i].x * (ts->max_x+1)/1024);//p[i].x leavs patched for FT5526
+ 			input_report_abs(idev, ABS_MT_POSITION_Y, p[i].y * (ts->max_y+1)/600);//p[i].y leavs patched for FT5526
+-#else
++			} else {
++/*#else*/
+ 			input_report_abs(idev, ABS_MT_POSITION_X, p[i].x);
+ 			input_report_abs(idev, ABS_MT_POSITION_Y, p[i].y); 
+-#endif
++			}
++/*#endif*/
+ 		}
+ 		tmp = ts->down_mask & ~down_mask;
+ 		ts->down_mask = down_mask;
+@@ -213,22 +224,28 @@ static inline void ts_evt_add(struct ft5x06_ts *ts,
+ 		translate(&p[0].x, &p[0].y);
+ #endif
+ #ifdef USE_ABS_SINGLE
+-#ifdef FT5206
++/*#ifdef FT5206*/
++		if (ts->version == 5206) {
+                 input_report_abs(idev, ABS_X, ts->max_x - p[0].y); //p[i].x leavs patched for FT5206
+                 input_report_abs(idev, ABS_Y, ts->max_y - p[0].x); //p[i].y leavs patched for FT5206
+-#elif defined FT5306
++		} else if (ts->version == 5306) {
++/*#elif defined FT5306*/
+ 		input_report_abs(idev, ABS_X, ts->max_x - p[0].y); //p[i].x leavs patched for FT5306
+                 input_report_abs(idev, ABS_Y, ts->max_y - p[0].x*600/768); //p[i].y leavs patched for FT5306
+-#elif defined FT5306_800480
++		} else if (ts->version == 53060) {
++/*#elif defined FT5306_800480*/
+ 		input_report_abs(idev, ABS_X, ts->max_x - p[0].y*800/1024);
+                 input_report_abs(idev, ABS_Y, ts->max_y - p[0].x*480/768);
+-#elif defined FT5526
++		} else if (ts->version == 5526) {
++/*#elif defined FT5526*/
+                 input_report_abs(idev, ABS_X, p[0].x * (ts->max_x+1)/1024);//p[i].x leavs patched for FT5526
+                 input_report_abs(idev, ABS_Y, p[0].y * (ts->max_y+1)/600);//p[i].y leavs patched for FT5526
+-#else
++		} else {
++/*#else*/
+ 		input_report_abs(idev, ABS_X, p[0].x);
+ 		input_report_abs(idev, ABS_Y, p[0].y);
+-#endif
++		}
++/*#endif*/
+ 		input_report_abs(idev, ABS_PRESSURE, 1);
+ 		input_report_key(idev, BTN_TOUCH, 1);
+ #endif
+@@ -415,13 +432,14 @@ static irqreturn_t ts_interrupt(int irq, void *id)
+ 						       | p[3]) & 0x7ff;
+ 					if (points[i].x > ts->max_x)
+ 						points[i].x = ts->max_x;
+-#if defined(FT5306) || defined(FT5206) || defined(FT5306_800480)
+-#else
+-					if (points[i].y > ts->max_y)
+-						points[i].x = ts->max_y;
+-					if (points[i].y > 767)
+-						points[i].y = points[i].y*600/800+191;
+-#endif
++/*#if defined(FT5306) || defined(FT5206) || defined(FT5306_800480)
++#else*/
++					if (ts->version == 5526 || ts->version == 5506 || ts->version == 5416)
++						if (points[i].y > ts->max_y)
++							points[i].x = ts->max_y;
++						if (points[i].y > 767)
++							points[i].y = points[i].y*600/800+191;
++/*#endif*/
+ 					p += 6;
+ 				}
+ 			}
+@@ -565,6 +583,9 @@ static int ts_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	struct ft5x06_ts *ts;
+ 	struct device *dev = &client->dev;
+ 	struct gpio_desc *gp;
++	/* add version support */
++	struct device_node *np = client->dev.of_node;
++	u32 val32;
+ 
+ 	if (gts) {
+ 		printk(KERN_ERR "%s: Error gts is already allocated\n",
+@@ -579,6 +600,14 @@ static int ts_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	ts->client = client;
+ 	ts->irq = client->irq ;
+ 
++	/* add version support */
++	if (of_property_read_u32(np, "version", &val32)) {
++		dev_err(dev, "Couldn't get version info, use default version [FT5506]");
++		ts->version = 5506;
++	} else {
++		ts->version = val32;
++	}
++		
+ 	gp = devm_gpiod_get_index(dev, "reset", 0);
+ 	dev_info(dev, "reset %p\n", gp);
+ 	if (!IS_ERR(gp)) {
+-- 
+1.9.1
+
