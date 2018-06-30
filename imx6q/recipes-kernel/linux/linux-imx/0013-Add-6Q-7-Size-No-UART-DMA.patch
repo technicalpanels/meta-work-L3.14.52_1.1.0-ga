@@ -1,0 +1,133 @@
+From 0bcd0eb347d4aa410082a163e1dc88d6d17d3b77 Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Sat, 30 Jun 2018 15:48:35 +0800
+Subject: [PATCH] Add 6Q 7 Size No UART DMA
+
+---
+ arch/arm/boot/dts/Makefile                         |  4 ++++
+ .../imx6q-eisd-1024600-gt911-logo-no-uart-dma.dts  | 10 ++++++++++
+ .../dts/imx6q-eisd-1024600-gt911-no-uart-dma.dts   | 10 ++++++++++
+ .../dts/imx6q-eisd-1024600-logo-no-uart-dma.dts    | 10 ++++++++++
+ .../boot/dts/imx6q-eisd-1024600-no-uart-dma.dts    | 10 ++++++++++
+ arch/arm/boot/dts/imx6qdl-eisd-no-uart-dma.dtsi    | 23 ++++++++++++++++++++++
+ 6 files changed, 67 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6q-eisd-1024600-gt911-logo-no-uart-dma.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-eisd-1024600-gt911-no-uart-dma.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-eisd-1024600-logo-no-uart-dma.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-eisd-1024600-no-uart-dma.dts
+ create mode 100644 arch/arm/boot/dts/imx6qdl-eisd-no-uart-dma.dtsi
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 438d880..96dd892 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -282,9 +282,13 @@ dtb-$(CONFIG_ARCH_MXC) += \
+ 	imx7d-sdb-wm8960.dtb \
+ 	imx7d-sdb-m4.dtb \
+ 	imx6q-eisd-1024600.dtb \
++	imx6q-eisd-1024600-no-uart-dma.dtb \
+ 	imx6q-eisd-1024600-logo.dtb \
++	imx6q-eisd-1024600-logo-no-uart-dma.dtb \
+ 	imx6q-eisd-1024600-gt911.dtb \
++	imx6q-eisd-1024600-gt911-no-uart-dma.dtb \
+ 	imx6q-eisd-1024600-gt911-logo.dtb \
++	imx6q-eisd-1024600-gt911-logo-no-uart-dma.dtb \
+ 	imx6dl-eisd-1024600.dtb \
+ 	imx6dl-eisd-1024600-logo.dtb \
+ 	imx6dl-eisd-1024600-gt911.dtb \
+diff --git a/arch/arm/boot/dts/imx6q-eisd-1024600-gt911-logo-no-uart-dma.dts b/arch/arm/boot/dts/imx6q-eisd-1024600-gt911-logo-no-uart-dma.dts
+new file mode 100644
+index 0000000..7f2b73a
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-eisd-1024600-gt911-logo-no-uart-dma.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-eisd-1024600-gt911-logo.dts"
++#include "imx6qdl-eisd-no-uart-dma.dtsi"
+diff --git a/arch/arm/boot/dts/imx6q-eisd-1024600-gt911-no-uart-dma.dts b/arch/arm/boot/dts/imx6q-eisd-1024600-gt911-no-uart-dma.dts
+new file mode 100644
+index 0000000..dff16fa
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-eisd-1024600-gt911-no-uart-dma.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-eisd-1024600-gt911.dts"
++#include "imx6qdl-eisd-no-uart-dma.dtsi"
+diff --git a/arch/arm/boot/dts/imx6q-eisd-1024600-logo-no-uart-dma.dts b/arch/arm/boot/dts/imx6q-eisd-1024600-logo-no-uart-dma.dts
+new file mode 100644
+index 0000000..4636afd
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-eisd-1024600-logo-no-uart-dma.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-eisd-1024600-logo.dts"
++#include "imx6qdl-eisd-no-uart-dma.dtsi"
+diff --git a/arch/arm/boot/dts/imx6q-eisd-1024600-no-uart-dma.dts b/arch/arm/boot/dts/imx6q-eisd-1024600-no-uart-dma.dts
+new file mode 100644
+index 0000000..ba8749e
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-eisd-1024600-no-uart-dma.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-eisd-1024600.dts"
++#include "imx6qdl-eisd-no-uart-dma.dtsi"
+diff --git a/arch/arm/boot/dts/imx6qdl-eisd-no-uart-dma.dtsi b/arch/arm/boot/dts/imx6qdl-eisd-no-uart-dma.dtsi
+new file mode 100644
+index 0000000..eeb3295
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qdl-eisd-no-uart-dma.dtsi
+@@ -0,0 +1,23 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++&uart1 {
++        dma-names = "","";
++};
++&uart2 {
++        dma-names = "","";
++};
++&uart3 {
++        dma-names = "","";
++};
++&uart4 {
++        dma-names = "","";
++};
++&uart5 {
++        dma-names = "","";
++};
+-- 
+1.9.1
+

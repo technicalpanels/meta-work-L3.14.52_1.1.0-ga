@@ -12,11 +12,16 @@ SRC_URI +="file://0001-keep-logo-from-uboot-to-kernel.patch \
 	   file://0010-Add-1280800-Board-Support.patch \
 	   file://0011-fix-led-dts.patch \
 	   file://0012-update-the-ft5x06-driver-version-to-control-by-dts.patch \
+	   file://0013-Add-6Q-7-Size-No-UART-DMA.patch \
 "
 KERNEL_DEVICETREE +="imx6q-eisd-1024600.dtb \
+		     imx6q-eisd-1024600-no-uart-dma.dtb \
 		     imx6q-eisd-1024600-logo.dtb \
+		     imx6q-eisd-1024600-logo-no-uart-dma.dtb \
 		     imx6q-eisd-1024600-gt911.dtb \
+		     imx6q-eisd-1024600-gt911-no-uart-dma.dtb \
 		     imx6q-eisd-1024600-gt911-logo.dtb \
+		     imx6q-eisd-1024600-gt911-logo-no-uart-dma.dtb \
 		     imx6q-eisd-1280800.dtb \
 		     imx6q-eisd-1280800-logo.dtb \
 		     imx6q-eisd-1280800-gt9271.dtb \
