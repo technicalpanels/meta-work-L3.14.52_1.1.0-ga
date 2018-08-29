@@ -1,0 +1,409 @@
+From ff52270a9d0c3aa18d559496c1a633f19ba36bf9 Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Wed, 29 Aug 2018 16:51:06 +0800
+Subject: [PATCH 2/2] Add 21.5 Display Support and Add Bypass GPIO
+
+---
+ board/chipsee/mx6eisd/mx6eisd.c  |  44 +++++--
+ include/configs/mx6eisd.h        |   6 +
+ include/configs/mx6eisd_common.h | 274 ++++++++++++++++++++++++++++-----------
+ 3 files changed, 236 insertions(+), 88 deletions(-)
+
+diff --git a/board/chipsee/mx6eisd/mx6eisd.c b/board/chipsee/mx6eisd/mx6eisd.c
+index a4550d4..c36c1b9 100644
+--- a/board/chipsee/mx6eisd/mx6eisd.c
++++ b/board/chipsee/mx6eisd/mx6eisd.c
+@@ -91,13 +91,13 @@ DECLARE_GLOBAL_DATA_PTR;
+ 
+ #define DISP0_PWR_EN	IMX_GPIO_NR(1, 21)
+ #define LVDS_PWR_EN     IMX_GPIO_NR(1, 21)
+-#define LVDS_PWR_EN2     IMX_GPIO_NR(1, 16)
++#define LVDS_PWR_EN2    IMX_GPIO_NR(1, 16)
+ #define EPDC_PAD_CTRL    (PAD_CTL_PKE | PAD_CTL_SPEED_MED |	\
+ 	PAD_CTL_DSE_40ohm | PAD_CTL_HYS)
+ 
+ /* Enable split mode leavs_20161024 */
+ //#define LVDS_SPLIT_MODE
+-#define PWM1
++//#define PWM1
+ 
+ int dram_init(void)
+ {
+@@ -316,6 +316,16 @@ static iomux_v3_cfg_t const epdc_disable_pads[] = {
+ };
+ #endif
+ 
++#if defined(CONFIG_BYPASS)
++/* Ethernet Bypass */
++static void enable_bypass(void)
++{
++    imx_iomux_v3_setup_pad(MX6_PAD_CSI0_DAT10__GPIO5_IO28 |
++                MUX_PAD_CTRL(NO_PAD_CTRL));
++    gpio_direction_output(IMX_GPIO_NR(5, 28), 1);
++}
++#endif
++
+ static void setup_iomux_uart(void)
+ {
+ 	imx_iomux_v3_setup_multiple_pads(uart1_pads, ARRAY_SIZE(uart1_pads));
+@@ -1150,25 +1160,30 @@ static void ipu_iomux_config(void)
+ static void setup_lvds_iomux(void)
+ {
+ 	struct pwm_device pwm = {
+-#ifdef PWM1
+-                .pwm_id = 0,
+-                .pwmo_invert = 0,
+-#else
+-                .pwm_id = 3,
+-                .pwmo_invert = 0,
++#if defined(LVDS043) || defined(LVDS007) || defined(LVDS101)
++        .pwm_id = 0,
++        .pwmo_invert = 0,
++#elif defined(LVDS10H) || defined(LVDS12L) || defined(LVDS120) || defined(LVDS150) || defined(LVDS170) || defined(LVDS190)
++        .pwm_id = 3,
++        .pwmo_invert = 1,
++#elif defined(LVDS180) || defined(LVDS215) || defined(LVDS280) || defined(LVDS550)
++        .pwm_id = 3,
++        .pwmo_invert = 0,
+ #endif
+ 	};
+ 
+ 	imx_pwm_config(pwm,50000, 50000);
+ 	imx_pwm_enable(pwm);
+ 
+-	/* GPIO backlight */
+-#ifdef PWM1
+-        imx_iomux_v3_setup_pad(MX6_PAD_SD1_DAT3__PWM1_OUT | MUX_PAD_CTRL(NO_PAD_CTRL));
++	/* backlight */
++#if defined(LVDS043) || defined(LVDS007) || defined(LVDS101)
++    imx_iomux_v3_setup_pad(MX6_PAD_SD1_DAT3__PWM1_OUT | MUX_PAD_CTRL(NO_PAD_CTRL));
+ #else
++    /* LVDS EN */
+ 	imx_iomux_v3_setup_pad(MX6_PAD_SD1_DAT0__GPIO1_IO16 | MUX_PAD_CTRL(NO_PAD_CTRL));
+-        gpio_direction_output(LVDS_PWR_EN2, 1);	
+-        imx_iomux_v3_setup_pad(MX6_PAD_SD1_CMD__PWM4_OUT | MUX_PAD_CTRL(NO_PAD_CTRL));
++    gpio_direction_output(LVDS_PWR_EN2, 1);	
++    /* LVDS PWM */
++    imx_iomux_v3_setup_pad(MX6_PAD_SD1_CMD__PWM4_OUT | MUX_PAD_CTRL(NO_PAD_CTRL));
+ #endif
+ }
+ #endif
+@@ -1310,6 +1325,9 @@ int board_ehci_power(int port, int on)
+ 
+ int board_early_init_f(void)
+ {
++#if defined(CONFIG_BYPASS)
++    enable_bypass();
++#endif
+ 	setup_iomux_uart();
+ #if defined(CONFIG_VIDEO_IPUV3)
+ 	setup_display();
+diff --git a/include/configs/mx6eisd.h b/include/configs/mx6eisd.h
+index 8ce1d4b..4aed3ee 100644
+--- a/include/configs/mx6eisd.h
++++ b/include/configs/mx6eisd.h
+@@ -40,6 +40,12 @@
+ #define PHYS_SDRAM_SIZE		(512u * 1024 * 1024)
+ #endif
+ 
++/*
++ * Chipsee Custom Macro
++ */
++#define CONFIG_BYPASS
++
++
+ #include "mx6eisd_common.h"
+ 
+ #define CONFIG_SYS_FSL_USDHC_NUM	3
+diff --git a/include/configs/mx6eisd_common.h b/include/configs/mx6eisd_common.h
+index 34e80c9..c3379eb 100644
+--- a/include/configs/mx6eisd_common.h
++++ b/include/configs/mx6eisd_common.h
+@@ -518,85 +518,209 @@
+ #endif
+ 
+ #ifdef IPU_OUTPUT_MODE_LVDS
++/*#define LVDS043*/
++/*#define LVDS007*/
++/*#define LVDS101*/
++/*#define LVDS10H*/
++/*#define LVDS12L*/
++/*#define LVDS120*/
++/*#define LVDS150*/ /* Same with LVDS120 */
++/*#define LVDS170*/
++/*#define LVDS180*/
++/*#define LVDS190*/
++#define LVDS215
++/*#define LVDS280*/
++/*#define LVDS550*/
++
++#ifdef LVDS043
++    #define DISPLAY_WIDTH                           480
++    #define DISPLAY_HEIGHT                          270
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     2
++    #define DISPLAY_HSYNC_END                       2
++    #define DISPLAY_HSYNC_WIDTH                     41
++    #define DISPLAY_VSYNC_START                     4
++    #define DISPLAY_VSYNC_END                       2
++    #define DISPLAY_VSYNC_WIDTH                     10
++    #define DISPLAY_PIX_CLOCK                       9000000
++#endif
++
++#ifdef LVDS007
++    #define DISPLAY_WIDTH                           1024
++    #define DISPLAY_HEIGHT                          600
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     90
++    #define DISPLAY_HSYNC_END                       30
++    #define DISPLAY_HSYNC_WIDTH                     200
++    #define DISPLAY_VSYNC_START                     20
++    #define DISPLAY_VSYNC_END                       5
++    #define DISPLAY_VSYNC_WIDTH                     10
++    #define DISPLAY_PIX_CLOCK                       51200000
++#endif
++
++#ifdef LVDS101
++    #define DISPLAY_WIDTH                           1280
++    #define DISPLAY_HEIGHT                          800
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  // RGB24 interface
++    #define DISPLAY_HSYNC_START                     40
++    #define DISPLAY_HSYNC_END                       40
++    #define DISPLAY_HSYNC_WIDTH                     80
++    #define DISPLAY_VSYNC_START                     10
++    #define DISPLAY_VSYNC_END                       3
++    #define DISPLAY_VSYNC_WIDTH                     10
++    #define DISPLAY_PIX_CLOCK                       71000000
++#endif
++
++#ifdef LVDS10H
++    #define DISPLAY_WIDTH                           1280
++    #define DISPLAY_HEIGHT                          800
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  // RGB24 interface
++    #define DISPLAY_HSYNC_START                     64
++    #define DISPLAY_HSYNC_END                       5
++    #define DISPLAY_HSYNC_WIDTH                     1
++    #define DISPLAY_VSYNC_START                     2
++    #define DISPLAY_VSYNC_END                       40
++    #define DISPLAY_VSYNC_WIDTH                     1
++    #define DISPLAY_PIX_CLOCK                       68200000
++#endif
++
++#ifdef LVDS12L
++    #define DISPLAY_WIDTH                           800
++    #define DISPLAY_HEIGHT                          600
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     127
++    #define DISPLAY_HSYNC_END                       127
++    #define DISPLAY_HSYNC_WIDTH                     2
++    #define DISPLAY_VSYNC_START                     32
++    #define DISPLAY_VSYNC_END                       32
++    #define DISPLAY_VSYNC_WIDTH                     2
++    #define DISPLAY_PIX_CLOCK                       40000000
++#endif
++
++#ifdef LVDS120  /* Same with LVDS150 */
++    #define DISPLAY_WIDTH                           1024
++    #define DISPLAY_HEIGHT                          768
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     240
++    #define DISPLAY_HSYNC_END                       48
++    #define DISPLAY_HSYNC_WIDTH                     32
++    #define DISPLAY_VSYNC_START                     23
++    #define DISPLAY_VSYNC_END                       3
++    #define DISPLAY_VSYNC_WIDTH                     12
++    #define DISPLAY_PIX_CLOCK                       65000000
++#endif
+ 
+-#define LVDS07
+-/*#define LVDS10*/
+-/*#define LVDS12_15*/
+-/*#define LVDS18*/
+-/*#define LVDS215*/
+-/*#define LVDS28*/
+-
+-#ifdef LVDS07
+-        #define DISPLAY_WIDTH   1024
+-        #define DISPLAY_HEIGHT  600
+-        #define DISPLAY_BPP             32
+-        #define DISPLAY_IF_BPP  24  /* RGB24 interface */
+-        #define DISPLAY_HSYNC_START             90
+-        #define DISPLAY_HSYNC_END               30
+-        #define DISPLAY_HSYNC_WIDTH             200
+-        #define DISPLAY_VSYNC_START             20
+-        #define DISPLAY_VSYNC_END               5
+-        #define DISPLAY_VSYNC_WIDTH             10
+-        #define DISPLAY_PIX_CLOCK       51200000
+-#endif
+-
+-#ifdef LVDS18
+-        #define DISPLAY_WIDTH   1366
+-        #define DISPLAY_HEIGHT  768
+-        #define DISPLAY_BPP             32
+-        #define DISPLAY_IF_BPP  24  /* RGB24 interface */
+-        #define DISPLAY_HSYNC_START             119
+-        #define DISPLAY_HSYNC_END               119
+-        #define DISPLAY_HSYNC_WIDTH             2
+-        #define DISPLAY_VSYNC_START             19
+-        #define DISPLAY_VSYNC_END               19
+-        #define DISPLAY_VSYNC_WIDTH             2
+-        #define DISPLAY_PIX_CLOCK       78000000
++#ifdef LVDS170
++    #define DISPLAY_WIDTH                           1280
++    #define DISPLAY_HEIGHT                          1024
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     150
++    #define DISPLAY_HSYNC_END                       150
++    #define DISPLAY_HSYNC_WIDTH                     108
++    #define DISPLAY_VSYNC_START                     40
++    #define DISPLAY_VSYNC_END                       40
++    #define DISPLAY_VSYNC_WIDTH                     4
++    #define DISPLAY_PIX_CLOCK                       108000000
++    #define LVDS_SPLIT_MODE  // For dual channel split mode.
++    #define LVDS_SPLIT_MODE_MADI    // Madi Patch
++#endif
++
++#ifdef LVDS180
++    #define DISPLAY_WIDTH                           1366
++    #define DISPLAY_HEIGHT                          768
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     119
++    #define DISPLAY_HSYNC_END                       119
++    #define DISPLAY_HSYNC_WIDTH                     2
++    #define DISPLAY_VSYNC_START                     19
++    #define DISPLAY_VSYNC_END                       19
++    #define DISPLAY_VSYNC_WIDTH                     2
++    #define DISPLAY_PIX_CLOCK                       78000000
++#endif
++
++#ifdef LVDS190
++    #define DISPLAY_WIDTH                           1440
++    #define DISPLAY_HEIGHT                          900
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     60
++    #define DISPLAY_HSYNC_END                       60
++    #define DISPLAY_HSYNC_WIDTH                     40
++    #define DISPLAY_VSYNC_START                     20
++    #define DISPLAY_VSYNC_END                       20
++    #define DISPLAY_VSYNC_WIDTH                     12
++    #define DISPLAY_PIX_CLOCK                       88800000
++    #define LVDS_SPLIT_MODE  // For dual channel split mode.
++    #define LVDS_SPLIT_MODE_MADI    // Madi Patch
+ #endif
+ 
+ #ifdef LVDS215
+-        #define DISPLAY_WIDTH   		1920
+-        #define DISPLAY_HEIGHT  		1080
+-        #define DISPLAY_BPP     		32
+-        #define DISPLAY_IF_BPP 		        24  /* RGB24 interface */
+-        #define DISPLAY_HSYNC_START             100
+-        #define DISPLAY_HSYNC_END               100
+-        #define DISPLAY_HSYNC_WIDTH             80
+-        #define DISPLAY_VSYNC_START             40
+-        #define DISPLAY_VSYNC_END               40
+-        #define DISPLAY_VSYNC_WIDTH             10
+-        #define DISPLAY_PIX_CLOCK       	148500000
+-        #define LVDS_SPLIT_MODE  // For dual channel split mode.
+-	#define LVDS_SPLIT_MODE_MADI	// Madi Patch
+-#endif
+-
+-#ifdef LVDS28
+-        #define DISPLAY_WIDTH   		1920
+-        #define DISPLAY_HEIGHT  		360
+-        #define DISPLAY_BPP     		32
+-        #define DISPLAY_IF_BPP 		        24  /* RGB24 interface */
+-        #define DISPLAY_HSYNC_START             139
+-        #define DISPLAY_HSYNC_END               139
+-        #define DISPLAY_HSYNC_WIDTH             2
+-        #define DISPLAY_VSYNC_START             22 
+-        #define DISPLAY_VSYNC_END               22
+-        #define DISPLAY_VSYNC_WIDTH             1
+-        #define DISPLAY_PIX_CLOCK       	148500000
+-        #define LVDS_SPLIT_MODE  // For dual channel split mode.
+-	#define LVDS_SPLIT_MODE_MADI	// Madi Patch
+-#endif
+-
+-        #define DISPLAY_VSYNC_POLARITY                  1
+-        #define DISPLAY_HSYNC_POLARITY                  1
+-        #define DISPLAY_CLOCK_POLARITY                  1
+-        #define DISPLAY_DATA_POLARITY                   0
+-        #define DISPLAY_DATA_ENABLE_POLARITY            1
+-
+-        #define IPU_NUM                 1  /* 1 for IPU1, 2 for IPU2. */
+-        #define DI_NUM                  0  /* 0 for DI0, 1 for DI1.*/
+-        #define LVDS_PORT               0  /* 0 for LVDS0, 1 for LVDS1. */
+-        #define DI_CLOCK_EXTERNAL_MODE  /* When clock external mode was defined, the DI clock root will be PLL3 PFD1, */
+-                                                                /* without this macro, the DI root clock is IPU internal clock. */
++    #define DISPLAY_WIDTH                           1920
++    #define DISPLAY_HEIGHT                          1080
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     100
++    #define DISPLAY_HSYNC_END                       100
++    #define DISPLAY_HSYNC_WIDTH                     80
++    #define DISPLAY_VSYNC_START                     40
++    #define DISPLAY_VSYNC_END                       40
++    #define DISPLAY_VSYNC_WIDTH                     10
++    #define DISPLAY_PIX_CLOCK                       148500000
++    #define LVDS_SPLIT_MODE  // For dual channel split mode.
++    #define LVDS_SPLIT_MODE_MADI    // Madi Patch
++#endif
++
++#ifdef LVDS280
++    #define DISPLAY_WIDTH                           1920
++    #define DISPLAY_HEIGHT                          360
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     139
++    #define DISPLAY_HSYNC_END                       139
++    #define DISPLAY_HSYNC_WIDTH                     2
++    #define DISPLAY_VSYNC_START                     22 
++    #define DISPLAY_VSYNC_END                       22
++    #define DISPLAY_VSYNC_WIDTH                     1
++    #define DISPLAY_PIX_CLOCK                       148500000
++    #define LVDS_SPLIT_MODE  // For dual channel split mode.
++    #define LVDS_SPLIT_MODE_MADI    // Madi Patch
++#endif
++
++#ifdef LVDS550
++    #define DISPLAY_WIDTH                           1920
++    #define DISPLAY_HEIGHT                          1080
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     100
++    #define DISPLAY_HSYNC_END                       100
++    #define DISPLAY_HSYNC_WIDTH                     80
++    #define DISPLAY_VSYNC_START                     40
++    #define DISPLAY_VSYNC_END                       40
++    #define DISPLAY_VSYNC_WIDTH                     10
++    #define DISPLAY_PIX_CLOCK                       148500000
++    #define LVDS_SPLIT_MODE  // For dual channel split mode.
++    #define LVDS_SPLIT_MODE_MADI    // Madi Patch
++#endif
++
++    #define DISPLAY_VSYNC_POLARITY                  1
++    #define DISPLAY_HSYNC_POLARITY                  1
++    #define DISPLAY_CLOCK_POLARITY                  1
++    #define DISPLAY_DATA_POLARITY                   0
++    #define DISPLAY_DATA_ENABLE_POLARITY            1
++
++    #define IPU_NUM                                 1  /* 1 for IPU1, 2 for IPU2. */
++    #define DI_NUM                                  0  /* 0 for DI0, 1 for DI1.*/
++    #define LVDS_PORT                               0  /* 0 for LVDS0, 1 for LVDS1. */
++    #define DI_CLOCK_EXTERNAL_MODE  /* When clock external mode was defined, the DI clock root will be PLL3 PFD1, */
++                                    /* without this macro, the DI root clock is IPU internal clock. */
+ #endif
+ 
+ #ifdef IPU_OUTPUT_MODE_LCD
+-- 
+1.9.1
+

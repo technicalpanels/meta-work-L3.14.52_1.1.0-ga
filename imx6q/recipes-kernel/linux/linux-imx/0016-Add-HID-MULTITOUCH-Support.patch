@@ -1,0 +1,21 @@
+From 7a8547db474bce7fac8eb233a51167a5efecfb1b Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Wed, 29 Aug 2018 11:56:14 +0800
+Subject: [PATCH] Add HID-MULTITOUCH Support
+
+---
+ arch/arm/configs/imx_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/imx_v7_defconfig b/arch/arm/configs/imx_v7_defconfig
+index 777d805..eede0be 100644
+--- a/arch/arm/configs/imx_v7_defconfig
++++ b/arch/arm/configs/imx_v7_defconfig
+@@ -435,3 +435,4 @@ CONFIG_CRC_CCITT=m
+ CONFIG_CRC_T10DIF=y
+ CONFIG_CRC7=m
+ CONFIG_LIBCRC32C=m
++CONFIG_HID_MULTITOUCH=y
+-- 
+1.9.1
+

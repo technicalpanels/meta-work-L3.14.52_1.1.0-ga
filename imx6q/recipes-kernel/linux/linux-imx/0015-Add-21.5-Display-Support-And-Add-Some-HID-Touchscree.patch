@@ -1,0 +1,279 @@
+From 9a9b1ae19267464c8b86225d8a9161bb9f71806f Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Wed, 29 Aug 2018 10:38:41 +0800
+Subject: [PATCH 2/2] Add 21.5 Display Support And Add Some HID Touchscreen
+ Support
+
+---
+ arch/arm/boot/dts/Makefile                      |  6 ++-
+ arch/arm/boot/dts/imx6dl-eisd-19201080-logo.dts | 10 ++++
+ arch/arm/boot/dts/imx6dl-eisd-19201080.dts      | 10 ++++
+ arch/arm/boot/dts/imx6q-eisd-19201080-logo.dts  | 10 ++++
+ arch/arm/boot/dts/imx6q-eisd-19201080.dts       | 10 ++++
+ arch/arm/boot/dts/imx6qdl-eisd-19201080.dtsi    | 70 +++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6qdl-eisd.dtsi             |  1 +
+ drivers/hid/hid-ids.h                           |  5 ++
+ drivers/hid/hid-multitouch.c                    | 15 ++++++
+ 9 files changed, 136 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/imx6dl-eisd-19201080-logo.dts
+ create mode 100644 arch/arm/boot/dts/imx6dl-eisd-19201080.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-eisd-19201080-logo.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-eisd-19201080.dts
+ create mode 100644 arch/arm/boot/dts/imx6qdl-eisd-19201080.dtsi
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index f258047..13e9f0a 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -304,7 +304,11 @@ dtb-$(CONFIG_ARCH_MXC) += \
+ 	imx6q-eisd-12801024.dtb \
+ 	imx6q-eisd-12801024-logo.dtb \
+ 	imx6dl-eisd-12801024.dtb \
+-	imx6dl-eisd-12801024-logo.dtb
++	imx6dl-eisd-12801024-logo.dtb \
++	imx6q-eisd-19201080.dtb \
++	imx6q-eisd-19201080-logo.dtb \
++	imx6dl-eisd-19201080.dtb \
++	imx6dl-eisd-19201080-logo.dtb 
+ dtb-$(CONFIG_ARCH_MXS) += imx23-evk.dtb \
+ 	imx23-olinuxino.dtb \
+ 	imx23-stmp378x_devb.dtb \
+diff --git a/arch/arm/boot/dts/imx6dl-eisd-19201080-logo.dts b/arch/arm/boot/dts/imx6dl-eisd-19201080-logo.dts
+new file mode 100644
+index 0000000..4b289b8
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6dl-eisd-19201080-logo.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6dl-eisd-19201080.dts"
++#include "imx6qdl-eisd-logo.dtsi"
+diff --git a/arch/arm/boot/dts/imx6dl-eisd-19201080.dts b/arch/arm/boot/dts/imx6dl-eisd-19201080.dts
+new file mode 100644
+index 0000000..51b24d2
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6dl-eisd-19201080.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6dl-eisd.dts"
++#include "imx6qdl-eisd-19201080.dtsi"
+diff --git a/arch/arm/boot/dts/imx6q-eisd-19201080-logo.dts b/arch/arm/boot/dts/imx6q-eisd-19201080-logo.dts
+new file mode 100644
+index 0000000..57e4362
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-eisd-19201080-logo.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-eisd-19201080.dts"
++#include "imx6qdl-eisd-logo.dtsi"
+diff --git a/arch/arm/boot/dts/imx6q-eisd-19201080.dts b/arch/arm/boot/dts/imx6q-eisd-19201080.dts
+new file mode 100644
+index 0000000..2b98111
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-eisd-19201080.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-eisd.dts"
++#include "imx6qdl-eisd-19201080.dtsi"
+diff --git a/arch/arm/boot/dts/imx6qdl-eisd-19201080.dtsi b/arch/arm/boot/dts/imx6qdl-eisd-19201080.dtsi
+new file mode 100644
+index 0000000..9f831f0
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qdl-eisd-19201080.dtsi
+@@ -0,0 +1,70 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++/ {
++	backlight {
++	        compatible = "pwm-backlight";
++	        pwms = <&pwm4 0 5000000>;
++        	brightness-levels = <0 4 8 16 32 64 128 255>;
++	        default-brightness-level = <7>;
++		pwm-invert = <0>;
++        	status = "okay";
++	};
++};
++
++&ldb {
++	status = "okay";
++	split-mode;
++	lvds-channel@0 {
++                fsl,data-mapping = "spwg";
++                fsl,data-width = <24>;
++                primary;
++                status = "okay";
++
++		display-timings {
++                        native-mode = <&timing0215>;
++			timing0215: CHIMEI-AUO215 {
++                                clock-frequency = <148640000>;
++                                hactive = <1920>;
++                                vactive = <1080>;
++                                hback-porch = <100>;
++                                hfront-porch = <100>;
++                                vback-porch = <40>;
++                                vfront-porch = <40>;
++                                hsync-len = <80>;
++                                vsync-len = <10>;
++                        };
++		};	
++	};
++
++	lvds-channel@1 {
++		fsl,data-mapping = "spwg";
++                fsl,data-width = <24>;
++                status = "okay";
++
++		display-timings {
++			native-mode = <&timing1215>;
++                        timing1215: CHIMEI-AUO215 {
++                                clock-frequency = <148640000>;
++                                hactive = <1920>;
++                                vactive = <1080>;
++                                hback-porch = <100>;
++                                hfront-porch = <100>;
++                                vback-porch = <40>;
++                                vfront-porch = <40>;
++                                hsync-len = <80>;
++                                vsync-len = <10>;
++                        };
++		};
++	};
++};
++
++&pwm4 {
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_pwm4>;
++        status = "okay";
++};
+diff --git a/arch/arm/boot/dts/imx6qdl-eisd.dtsi b/arch/arm/boot/dts/imx6qdl-eisd.dtsi
+index 742a6fc..808760e 100644
+--- a/arch/arm/boot/dts/imx6qdl-eisd.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-eisd.dtsi
+@@ -543,6 +543,7 @@
+                                 MX6QDL_PAD_KEY_COL2__GPIO4_IO10 0X80000000      /* GPIO4_10 */
+                                 MX6QDL_PAD_EIM_A25__GPIO5_IO02  0X80000000      /* GPIO5_2 */
+ 				MX6QDL_PAD_CSI0_DATA_EN__GPIO5_IO20 0X80000000  /* GPIO5_20 GT911 RESET*/
++				MX6QDL_PAD_CSI0_DAT10__GPIO5_IO28 0X80000000    /* Bypass */
+ 			>;
+ 		};
+ 
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 80ecd31..bd564f2 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -168,6 +168,7 @@
+ #define USB_VENDOR_ID_ATMEL		0x03eb
+ #define USB_DEVICE_ID_ATMEL_MULTITOUCH	0x211c
+ #define USB_DEVICE_ID_ATMEL_MXT_DIGITIZER	0x2118
++#define USB_DEVICE_ID_ATMEL_212C	0x212c
+ #define USB_VENDOR_ID_ATMEL_V_USB	0x16c0
+ #define USB_DEVICE_ID_ATMEL_V_USB	0x05df
+ 
+@@ -294,6 +295,7 @@
+ #define USB_DEVICE_ID_DWAV_EGALAX_MULTITOUCH_7349	0x7349
+ #define USB_DEVICE_ID_DWAV_EGALAX_MULTITOUCH_73F7	0x73f7
+ #define USB_DEVICE_ID_DWAV_EGALAX_MULTITOUCH_A001	0xa001
++#define USB_DEVICE_ID_DWAV_EGALAX_MULTITOUCH_C000	0xc000
+ 
+ #define USB_VENDOR_ID_ELAN		0x04f3
+ #define USB_DEVICE_ID_ELAN_TOUCHSCREEN	0x0089
+@@ -456,6 +458,8 @@
+ 
+ #define USB_VENDOR_ID_ILITEK		0x222a
+ #define USB_DEVICE_ID_ILITEK_MULTITOUCH	0x0001
++#define USB_DEVICE_ID_ILITEK_004D	0x004d
++#define USB_DEVICE_ID_ILITEK_0068	0x0068
+ 
+ #define USB_VENDOR_ID_INTEL_0		0x8086
+ #define USB_VENDOR_ID_INTEL_1		0x8087
+@@ -886,6 +890,7 @@
+ #define USB_DEVICE_ID_UCLOGIC_TABLET_TWHA60	0x0781
+ 
+ #define USB_VENDOR_ID_UNITEC	0x227d
++#define USB_DEVICE_ID_UNITEC_USB_TOUCH_0103	0x0103
+ #define USB_DEVICE_ID_UNITEC_USB_TOUCH_0709	0x0709
+ #define USB_DEVICE_ID_UNITEC_USB_TOUCH_0A19	0x0a19
+ 
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index ad83f2c..634d049 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1063,6 +1063,9 @@ static const struct hid_device_id mt_devices[] = {
+ 	{ .driver_data = MT_CLS_SERIAL,
+ 		MT_USB_DEVICE(USB_VENDOR_ID_ATMEL,
+ 			USB_DEVICE_ID_ATMEL_MXT_DIGITIZER) },
++	{ .driver_data = MT_CLS_DEFAULT,
++		HID_USB_DEVICE(USB_VENDOR_ID_ATMEL,
++			USB_DEVICE_ID_ATMEL_212C) },
+ 
+ 	/* Baanto multitouch devices */
+ 	{ .driver_data = MT_CLS_NSMU,
+@@ -1109,6 +1112,9 @@ static const struct hid_device_id mt_devices[] = {
+ 	{ .driver_data = MT_CLS_EGALAX,
+ 		MT_USB_DEVICE(USB_VENDOR_ID_DWAV,
+ 			USB_DEVICE_ID_DWAV_EGALAX_MULTITOUCH_480E) },
++	{ .driver_data = MT_CLS_DEFAULT,
++		HID_USB_DEVICE(USB_VENDOR_ID_DWAV,
++			USB_DEVICE_ID_DWAV_EGALAX_MULTITOUCH_C000) },
+ 
+ 	/* eGalax devices (capacitive) */
+ 	{ .driver_data = MT_CLS_EGALAX_SERIAL,
+@@ -1225,6 +1231,12 @@ static const struct hid_device_id mt_devices[] = {
+ 	{  .driver_data = MT_CLS_NSMU,
+ 		MT_USB_DEVICE(USB_VENDOR_ID_ILITEK,
+ 			USB_DEVICE_ID_ILITEK_MULTITOUCH) },
++	{  .driver_data = MT_CLS_DEFAULT,
++		HID_USB_DEVICE(USB_VENDOR_ID_ILITEK,
++		USB_DEVICE_ID_ILITEK_004D)},
++	{  .driver_data = MT_CLS_DEFAULT,
++		HID_USB_DEVICE(USB_VENDOR_ID_ILITEK,
++		USB_DEVICE_ID_ILITEK_0068)},
+ 
+ 	/* IRTOUCH panels */
+ 	{ .driver_data = MT_CLS_DUAL_INRANGE_CONTACTID,
+@@ -1347,6 +1359,9 @@ static const struct hid_device_id mt_devices[] = {
+ 	{ .driver_data = MT_CLS_NSMU,
+ 		MT_USB_DEVICE(USB_VENDOR_ID_UNITEC,
+ 			USB_DEVICE_ID_UNITEC_USB_TOUCH_0A19) },
++	{ .driver_data = MT_CLS_DEFAULT,
++		HID_USB_DEVICE(USB_VENDOR_ID_UNITEC,
++			USB_DEVICE_ID_UNITEC_USB_TOUCH_0103) },
+ 
+ 	/* Wistron panels */
+ 	{ .driver_data = MT_CLS_NSMU,
+-- 
+1.9.1
+

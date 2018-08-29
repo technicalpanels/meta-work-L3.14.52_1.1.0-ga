@@ -13,6 +13,9 @@ SRC_URI +="file://0001-keep-logo-from-uboot-to-kernel.patch \
            file://0011-fix-led-dts.patch \
            file://0012-update-the-ft5x06-driver-version-to-control-by-dts.patch \
 	   file://0013-Add-6Q-7-Size-No-UART-DMA.patch \
+	   file://0014-IMX6QDL-Add-17-Size-Board-Support-And-Modify-Backlig.patch \
+	   file://0015-Add-21.5-Display-Support-And-Add-Some-HID-Touchscree.patch \
+           file://0016-Add-HID-MULTITOUCH-Support.patch \
 "
 KERNEL_DEVICETREE +="imx6dl-eisd-1024600.dtb \
                      imx6dl-eisd-1024600-logo.dtb \
@@ -21,4 +24,8 @@ KERNEL_DEVICETREE +="imx6dl-eisd-1024600.dtb \
                      imx6dl-eisd-1280800.dtb \
                      imx6dl-eisd-1280800-logo.dtb \
                      imx6dl-eisd-1280800-gt9271.dtb \
-                     imx6dl-eisd-1280800-gt9271-logo.dtb"
+                     imx6dl-eisd-1280800-gt9271-logo.dtb \
+		     imx6dl-eisd-12801024.dtb \
+		     imx6dl-eisd-12801024-logo.dtb \
+		     imx6dl-eisd-19201080.dtb \
+		     imx6dl-eisd-19201080-logo.dtb"

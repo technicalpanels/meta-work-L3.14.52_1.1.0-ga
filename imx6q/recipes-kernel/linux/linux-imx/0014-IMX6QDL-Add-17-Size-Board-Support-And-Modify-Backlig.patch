@@ -1,0 +1,242 @@
+From e338e01d87c00e6815924570cbca5714f098e32c Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Sat, 30 Jun 2018 17:33:44 +0800
+Subject: [PATCH] IMX6QDL Add 17 Size Board Support And Modify Backlig
+
+---
+ arch/arm/boot/dts/Makefile                      |  6 ++-
+ arch/arm/boot/dts/imx6dl-eisd-12801024-logo.dts | 10 ++++
+ arch/arm/boot/dts/imx6dl-eisd-12801024.dts      | 10 ++++
+ arch/arm/boot/dts/imx6q-eisd-12801024-logo.dts  | 10 ++++
+ arch/arm/boot/dts/imx6q-eisd-12801024.dts       | 10 ++++
+ arch/arm/boot/dts/imx6qdl-eisd-12801024.dtsi    | 70 +++++++++++++++++++++++++
+ drivers/video/backlight/pwm_bl.c                | 31 ++++++-----
+ 7 files changed, 134 insertions(+), 13 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx6dl-eisd-12801024-logo.dts
+ create mode 100644 arch/arm/boot/dts/imx6dl-eisd-12801024.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-eisd-12801024-logo.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-eisd-12801024.dts
+ create mode 100644 arch/arm/boot/dts/imx6qdl-eisd-12801024.dtsi
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 96dd892..f258047 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -300,7 +300,11 @@ dtb-$(CONFIG_ARCH_MXC) += \
+ 	imx6dl-eisd-1280800.dtb \
+ 	imx6dl-eisd-1280800-logo.dtb \
+ 	imx6dl-eisd-1280800-gt9271.dtb \
+-	imx6dl-eisd-1280800-gt9271-logo.dtb
++	imx6dl-eisd-1280800-gt9271-logo.dtb \
++	imx6q-eisd-12801024.dtb \
++	imx6q-eisd-12801024-logo.dtb \
++	imx6dl-eisd-12801024.dtb \
++	imx6dl-eisd-12801024-logo.dtb
+ dtb-$(CONFIG_ARCH_MXS) += imx23-evk.dtb \
+ 	imx23-olinuxino.dtb \
+ 	imx23-stmp378x_devb.dtb \
+diff --git a/arch/arm/boot/dts/imx6dl-eisd-12801024-logo.dts b/arch/arm/boot/dts/imx6dl-eisd-12801024-logo.dts
+new file mode 100644
+index 0000000..96778e5
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6dl-eisd-12801024-logo.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6dl-eisd-12801024.dts"
++#include "imx6qdl-eisd-logo.dtsi"
+diff --git a/arch/arm/boot/dts/imx6dl-eisd-12801024.dts b/arch/arm/boot/dts/imx6dl-eisd-12801024.dts
+new file mode 100644
+index 0000000..b085748
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6dl-eisd-12801024.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6dl-eisd.dts"
++#include "imx6qdl-eisd-12801024.dtsi"
+diff --git a/arch/arm/boot/dts/imx6q-eisd-12801024-logo.dts b/arch/arm/boot/dts/imx6q-eisd-12801024-logo.dts
+new file mode 100644
+index 0000000..c14b0e7
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-eisd-12801024-logo.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-eisd-12801024.dts"
++#include "imx6qdl-eisd-logo.dtsi"
+diff --git a/arch/arm/boot/dts/imx6q-eisd-12801024.dts b/arch/arm/boot/dts/imx6q-eisd-12801024.dts
+new file mode 100644
+index 0000000..5f98ff4
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-eisd-12801024.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-eisd.dts"
++#include "imx6qdl-eisd-12801024.dtsi"
+diff --git a/arch/arm/boot/dts/imx6qdl-eisd-12801024.dtsi b/arch/arm/boot/dts/imx6qdl-eisd-12801024.dtsi
+new file mode 100644
+index 0000000..d67d0d7
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qdl-eisd-12801024.dtsi
+@@ -0,0 +1,70 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++/ {
++	backlight {
++	        compatible = "pwm-backlight";
++	        pwms = <&pwm4 0 5000000>;
++        	brightness-levels = <0 4 8 16 32 64 128 255>;
++	        default-brightness-level = <7>;
++		pwm-invert = <0>;
++        	status = "okay";
++	};
++};
++
++&ldb {
++	status = "okay";
++	split-mode;
++	lvds-channel@0 {
++                fsl,data-mapping = "spwg";
++                fsl,data-width = <24>;
++                primary;
++                status = "okay";
++
++		display-timings {
++                        native-mode = <&timing017>;
++			timing017: AUO170 {
++                                clock-frequency = <108000000>;
++                                hactive = <1280>;
++                                vactive = <1024>;
++                                hback-porch = <150>;
++                                hfront-porch = <150>;
++                                vback-porch = <40>;
++                                vfront-porch = <40>;
++                                hsync-len = <108>;
++                                vsync-len = <4>;
++                        };
++		};	
++	};
++
++	lvds-channel@1 {
++		fsl,data-mapping = "spwg";
++                fsl,data-width = <24>;
++                status = "okay";
++
++		display-timings {
++			native-mode = <&timing117>;
++                        timing117: AUO170 {
++                                clock-frequency = <108000000>;
++                                hactive = <1280>;
++                                vactive = <1024>;
++                                hback-porch = <150>;
++                                hfront-porch = <150>;
++                                vback-porch = <40>;
++                                vfront-porch = <40>;
++                                hsync-len = <108>;
++                                vsync-len = <4>;
++                        };
++		};
++	};
++};
++
++&pwm4 {
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_pwm4>;
++        status = "okay";
++};
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 0630047..509b070 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -24,9 +24,9 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ 
+-/*21.5 the logic is use right pwm backlight,enable "define PWM1"*/
++/* Add pwm invert decide */
++int invert = 0;
+ 
+-#define PWM1
+ struct pwm_bl_data {
+ 	struct pwm_device	*pwm;
+ 	struct device		*dev;
+@@ -104,21 +104,22 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+ {
+ 	struct pwm_bl_data *pb = bl_get_data(bl);
+ 	int max = bl->props.max_brightness;
+-#ifdef PWM1
+-	int brightness = bl->props.brightness;
+-#else
+-	int brightness = max - bl->props.brightness - 1;
+-#endif
++	/* Add pwm invert decide */
++	int brightness;
++	if (!invert)
++		brightness = bl->props.brightness;
++	else
++		brightness = max - bl->props.brightness - 1;
+ 	int duty_cycle;
+ 
+ 	if (bl->props.power != FB_BLANK_UNBLANK ||
+ 	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
+ 	    bl->props.state & BL_CORE_FBBLANK)
+-#ifdef PWM1
+-		brightness = 0;
+-#else
+-		brightness = max;
+-#endif
++		/* Add pwm invert decide */
++		if(!invert)	
++			brightness = 0;
++		else
++			brightness = max;
+ 
+ 	if (pb->notify)
+ 		brightness = pb->notify(pb->dev, brightness);
+@@ -201,6 +202,12 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ 		data->max_brightness--;
+ 	}
+ 
++	/* Add pwm invert decide */
++	if (!of_property_read_u32(node, "pwm-invert", &value))
++	        invert = value;
++	else
++		invert = 0;
++
+ 	data->enable_gpio = of_get_named_gpio_flags(node, "enable-gpios", 0,
+ 						    &flags);
+ 	if (data->enable_gpio == -EPROBE_DEFER)
+-- 
+1.9.1
+
