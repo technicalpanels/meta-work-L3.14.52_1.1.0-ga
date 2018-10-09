@@ -1,0 +1,57 @@
+From 11cead2d1c6a9e7cee9e55995bb9e4a032010984 Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Tue, 9 Oct 2018 15:19:00 +0800
+Subject: [PATCH] Add TSC2007 Touchscreen Support
+
+
+diff --git a/arch/arm/boot/dts/imx6qdl-eisd.dtsi b/arch/arm/boot/dts/imx6qdl-eisd.dtsi
+index 808760e..3975855 100644
+--- a/arch/arm/boot/dts/imx6qdl-eisd.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-eisd.dtsi
+@@ -314,6 +314,18 @@
+ 		reg = <0x32>;
+ 	};	
+ 
++	tsc2007@48 {
++                 compatible = "ti,tsc2007";
++                 reg = <0x48>;
++                 pinctrl-names = "default";
++                 interrupt-parent = <&gpio1>;
++                 interrupts = <27 0x8>;
++                 gpios = <&gpio1 27 0>;
++                 ti,max-rt = <0x12C>;
++                 ti,poll-period = <30>;
++                 ti,x-plate-ohms = <150>;
++         };
++
+ 	ov564x: ov564x@3c {
+ 		compatible = "ovti,ov564x";
+ 		reg = <0x3c>;
+diff --git a/arch/arm/configs/imx_v7_defconfig b/arch/arm/configs/imx_v7_defconfig
+index eede0be..402e670 100644
+--- a/arch/arm/configs/imx_v7_defconfig
++++ b/arch/arm/configs/imx_v7_defconfig
+@@ -172,6 +172,7 @@ CONFIG_MOUSE_PS2=m
+ CONFIG_MOUSE_PS2_ELANTECH=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_FT5X06=y
++CONFIG_TOUCHSCREEN_TSC2007=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_MMA8450=y
+ CONFIG_INPUT_ISL29023=y
+diff --git a/drivers/input/touchscreen/tsc2007.c b/drivers/input/touchscreen/tsc2007.c
+index 1bf9906..1c0d874 100644
+--- a/drivers/input/touchscreen/tsc2007.c
++++ b/drivers/input/touchscreen/tsc2007.c
+@@ -410,7 +410,7 @@ static int tsc2007_probe(struct i2c_client *client,
+ 	snprintf(ts->phys, sizeof(ts->phys),
+ 		 "%s/input0", dev_name(&client->dev));
+ 
+-	input_dev->name = "TSC2007 Touchscreen";
++	input_dev->name = "tsc2007";
+ 	input_dev->phys = ts->phys;
+ 	input_dev->id.bustype = BUS_I2C;
+ 
+-- 
+1.9.1
+

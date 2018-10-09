@@ -1,0 +1,26 @@
+From 23291b6db765a2833955446a78df9423a49b09a7 Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Thu, 6 Sep 2018 16:27:01 +0800
+Subject: [PATCH 2/2] Add eMMC5.1[EXT_CSD revision 8] support
+
+---
+ drivers/mmc/core/mmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 03c38ff..37e46bd 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -390,7 +390,8 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 	}
+ 
+ 	card->ext_csd.rev = ext_csd[EXT_CSD_REV];
+-	if (card->ext_csd.rev > 7) {
++	//if (card->ext_csd.rev > 7) {
++	if (card->ext_csd.rev > 8) {
+ 		pr_err("%s: unrecognised EXT_CSD revision %d\n",
+ 			mmc_hostname(card->host), card->ext_csd.rev);
+ 		err = -EINVAL;
+-- 
+1.9.1
+
