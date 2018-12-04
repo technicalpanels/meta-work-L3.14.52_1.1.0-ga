@@ -1,0 +1,73 @@
+From f8219e3fb21009ddf50cd386fc75141653ea2c0a Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Fri, 9 Nov 2018 16:10:40 +0800
+Subject: [PATCH] Add 3cm GT9271 Touch Config Support
+
+---
+ arch/arm/boot/dts/imx6dl-eisd-1280800-gt9271.dts | 19 +++++++++++++++++++
+ arch/arm/boot/dts/imx6q-eisd-1280800-gt9271.dts  | 19 +++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx6dl-eisd-1280800-gt9271.dts b/arch/arm/boot/dts/imx6dl-eisd-1280800-gt9271.dts
+index b2e205b..f635682 100644
+--- a/arch/arm/boot/dts/imx6dl-eisd-1280800-gt9271.dts
++++ b/arch/arm/boot/dts/imx6dl-eisd-1280800-gt9271.dts
+@@ -17,6 +17,25 @@
+                 interrupts = <9 2>;
+                 goodix,irq-gpio = <&gpio1 9 0>;
+                 goodix,rst-gpio = <&gpio5 20 0>;
++		goodix,cfg-group0 = [
++                        5F 00 10 00 10 0A 0D 08 01 08 28
++                        05 50 32 03 05 00 00 00 00 00 00
++                        00 00 00 00 00 90 30 AA 19 16 12
++                        0C 00 00 00 BC 03 25 00 00 00 00
++                        00 00 00 00 07 00 00 0F 26 94 C5
++                        02 07 00 00 04 A3 10 00 8E 13 00
++                        7B 17 00 6A 1C 00 5D 22 00 5D 00
++                        00 00 00 00 00 00 00 00 00 00 00
++                        00 00 00 00 00 00 00 00 00 00 00
++                        00 00 00 00 00 00 00 00 00 00 00
++                        00 00 00 01 04 05 06 07 08 09 0C
++                        0D 0E 0F 10 11 14 15 16 17 18 19
++                        00 00 00 00 00 00 00 00 00 00 00
++                        02 04 06 07 08 0A 0C 0D 0E 0F 10
++                        11 12 13 14 19 1B 1C 1E 1F 20 21
++                        22 23 24 25 26 27 28 29 2A 00 00
++                        00 00 00 00 00 00 00 00 3E 01
++                ];
+ 		goodix,cfg-group3 = [
+                         63 00 05 20 03 0A 3D 00 01 08 28
+                         05 55 41 03 05 00 00 00 00 00 00
+diff --git a/arch/arm/boot/dts/imx6q-eisd-1280800-gt9271.dts b/arch/arm/boot/dts/imx6q-eisd-1280800-gt9271.dts
+index f5ee9b1..ed95636 100644
+--- a/arch/arm/boot/dts/imx6q-eisd-1280800-gt9271.dts
++++ b/arch/arm/boot/dts/imx6q-eisd-1280800-gt9271.dts
+@@ -17,6 +17,25 @@
+                 interrupts = <9 2>;
+                 goodix,irq-gpio = <&gpio1 9 0>;
+                 goodix,rst-gpio = <&gpio5 20 0>;
++		goodix,cfg-group0 = [
++            		5F 00 10 00 10 0A 0D 08 01 08 28
++		        05 50 32 03 05 00 00 00 00 00 00
++            		00 00 00 00 00 90 30 AA 19 16 12
++            		0C 00 00 00 BC 03 25 00 00 00 00
++            		00 00 00 00 07 00 00 0F 26 94 C5
++            		02 07 00 00 04 A3 10 00 8E 13 00
++            		7B 17 00 6A 1C 00 5D 22 00 5D 00
++            		00 00 00 00 00 00 00 00 00 00 00
++            		00 00 00 00 00 00 00 00 00 00 00
++            		00 00 00 00 00 00 00 00 00 00 00
++            		00 00 00 01 04 05 06 07 08 09 0C
++            		0D 0E 0F 10 11 14 15 16 17 18 19
++            		00 00 00 00 00 00 00 00 00 00 00
++            		02 04 06 07 08 0A 0C 0D 0E 0F 10
++            		11 12 13 14 19 1B 1C 1E 1F 20 21
++            		22 23 24 25 26 27 28 29 2A 00 00
++            		00 00 00 00 00 00 00 00 3E 01
++        	];
+ 		goodix,cfg-group3 = [
+                         63 00 05 20 03 0A 3D 00 01 08 28
+                         05 55 41 03 05 00 00 00 00 00 00
+-- 
+1.9.1
+

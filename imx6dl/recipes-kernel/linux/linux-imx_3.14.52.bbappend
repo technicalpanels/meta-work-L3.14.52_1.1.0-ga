@@ -18,6 +18,7 @@ SRC_URI +="file://0001-keep-logo-from-uboot-to-kernel.patch \
            file://0016-Add-HID-MULTITOUCH-Support.patch \
 	   file://0017-Add-eMMC5.1-EXT_CSD-revision-8-support.patch \
 	   file://0018-Add-TSC2007-Touchscreen-Support.patch \
+	   file://0019-Add-3cm-GT9271-Touch-Config-Support.patch \
 "
 KERNEL_DEVICETREE +="imx6dl-eisd-1024600.dtb \
                      imx6dl-eisd-1024600-logo.dtb \
