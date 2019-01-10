@@ -19,8 +19,14 @@ SRC_URI +="file://0001-keep-logo-from-uboot-to-kernel.patch \
 	   file://0017-Add-eMMC5.1-EXT_CSD-revision-8-support.patch \
 	   file://0018-Add-TSC2007-Touchscreen-Support.patch \
 	   file://0019-Add-3cm-GT9271-Touch-Config-Support.patch \
+	   file://0020-Add-MCP23S08-GPIO-IC-Support.patch \
+	   file://0021-IMX6QDL-Add-15-Size-Board-Support.patch \
+	   file://0022-IMX6QDL-Add-12L-Size-Board-Support.patch \
+	   file://0023-Add-filter-noise-feature-for-TSC2007-And-add-this-fe.patch \
+	   file://0024-IMX6QDL-Add-9.7-Size-Board-Support.patch \
+	   file://0025-Add-Quectel-EC20-R2.0-Support-And-Remove-CRYPTO_SHA1.patch \
 "
-KERNEL_DEVICETREE +="imx6q-eisd-1024600.dtb \
+KERNEL_DEVICETREE ="imx6q-eisd-1024600.dtb \
 		     imx6q-eisd-1024600-no-uart-dma.dtb \
 		     imx6q-eisd-1024600-logo.dtb \
 		     imx6q-eisd-1024600-logo-no-uart-dma.dtb \
@@ -28,10 +34,16 @@ KERNEL_DEVICETREE +="imx6q-eisd-1024600.dtb \
 		     imx6q-eisd-1024600-gt911-no-uart-dma.dtb \
 		     imx6q-eisd-1024600-gt911-logo.dtb \
 		     imx6q-eisd-1024600-gt911-logo-no-uart-dma.dtb \
+  	             imx6q-eisd-1024768-97.dtb \
+		     imx6q-eisd-1024768-logo-97.dtb \
 		     imx6q-eisd-1280800.dtb \
 		     imx6q-eisd-1280800-logo.dtb \
 		     imx6q-eisd-1280800-gt9271.dtb \
 		     imx6q-eisd-1280800-gt9271-logo.dtb \
+  	             imx6q-eisd-800600.dtb \
+		     imx6q-eisd-800600-logo.dtb \
+  	             imx6q-eisd-1024768.dtb \
+		     imx6q-eisd-1024768-logo.dtb \
   	             imx6q-eisd-12801024.dtb \
 		     imx6q-eisd-12801024-logo.dtb \
   	             imx6q-eisd-19201080.dtb \

@@ -1,0 +1,79 @@
+From f60efb0502e10a4f620562df3878cc4f88183305 Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Fri, 4 Jan 2019 16:34:05 +0800
+Subject: [PATCH] Add 9.7 Size Support And reset to 7 Size default.patch
+
+---
+ board/chipsee/mx6eisd/mx6eisd.c  |  4 ++--
+ include/configs/mx6eisd_common.h | 19 +++++++++++++++++--
+ 2 files changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/board/chipsee/mx6eisd/mx6eisd.c b/board/chipsee/mx6eisd/mx6eisd.c
+index c36c1b9..aba0e6a 100644
+--- a/board/chipsee/mx6eisd/mx6eisd.c
++++ b/board/chipsee/mx6eisd/mx6eisd.c
+@@ -1160,7 +1160,7 @@ static void ipu_iomux_config(void)
+ static void setup_lvds_iomux(void)
+ {
+ 	struct pwm_device pwm = {
+-#if defined(LVDS043) || defined(LVDS007) || defined(LVDS101)
++#if defined(LVDS043) || defined(LVDS007) || defined(LVDS097) || defined(LVDS101)
+         .pwm_id = 0,
+         .pwmo_invert = 0,
+ #elif defined(LVDS10H) || defined(LVDS12L) || defined(LVDS120) || defined(LVDS150) || defined(LVDS170) || defined(LVDS190)
+@@ -1176,7 +1176,7 @@ static void setup_lvds_iomux(void)
+ 	imx_pwm_enable(pwm);
+ 
+ 	/* backlight */
+-#if defined(LVDS043) || defined(LVDS007) || defined(LVDS101)
++#if defined(LVDS043) || defined(LVDS007) || defined(LVDS097) || defined(LVDS101)
+     imx_iomux_v3_setup_pad(MX6_PAD_SD1_DAT3__PWM1_OUT | MUX_PAD_CTRL(NO_PAD_CTRL));
+ #else
+     /* LVDS EN */
+diff --git a/include/configs/mx6eisd_common.h b/include/configs/mx6eisd_common.h
+index c3379eb..db07886 100644
+--- a/include/configs/mx6eisd_common.h
++++ b/include/configs/mx6eisd_common.h
+@@ -519,7 +519,8 @@
+ 
+ #ifdef IPU_OUTPUT_MODE_LVDS
+ /*#define LVDS043*/
+-/*#define LVDS007*/
++#define LVDS007
++/*#define LVDS097*/ /* Need Modify displayargs if=RGB666 too */
+ /*#define LVDS101*/
+ /*#define LVDS10H*/
+ /*#define LVDS12L*/
+@@ -528,7 +529,7 @@
+ /*#define LVDS170*/
+ /*#define LVDS180*/
+ /*#define LVDS190*/
+-#define LVDS215
++/*#define LVDS215*/
+ /*#define LVDS280*/
+ /*#define LVDS550*/
+ 
+@@ -560,6 +561,20 @@
+     #define DISPLAY_PIX_CLOCK                       51200000
+ #endif
+ 
++#ifdef LVDS097
++    #define DISPLAY_WIDTH                           1024
++    #define DISPLAY_HEIGHT                          768
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          18  /* RGB18 interface */
++    #define DISPLAY_HSYNC_START                     240
++    #define DISPLAY_HSYNC_END                       48
++    #define DISPLAY_HSYNC_WIDTH                     32
++    #define DISPLAY_VSYNC_START                     23
++    #define DISPLAY_VSYNC_END                       3
++    #define DISPLAY_VSYNC_WIDTH                     12
++    #define DISPLAY_PIX_CLOCK                       65000000
++#endif
++
+ #ifdef LVDS101
+     #define DISPLAY_WIDTH                           1280
+     #define DISPLAY_HEIGHT                          800
+-- 
+1.9.1
+

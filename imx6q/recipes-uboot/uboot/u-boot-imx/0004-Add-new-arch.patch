@@ -1,0 +1,138 @@
+From 9f98cdfc802de40494d356d7e7c2c6c464f0a47c Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Wed, 9 Jan 2019 18:07:41 +0800
+Subject: [PATCH] Add new arch
+
+---
+ include/configs/eisd.h           | 68 ++++++++++++++++++++++++++++++++++++++++
+ include/configs/mx6eisd.h        |  2 ++
+ include/configs/mx6eisd_common.h | 18 ++---------
+ 3 files changed, 72 insertions(+), 16 deletions(-)
+ create mode 100644 include/configs/eisd.h
+
+diff --git a/include/configs/eisd.h b/include/configs/eisd.h
+new file mode 100644
+index 0000000..4cbb9a6
+--- /dev/null
++++ b/include/configs/eisd.h
+@@ -0,0 +1,68 @@
++/*
++ * Copyright (C) 2013-2016 Chipsee Co.,Limited All Rights Reserved.
++ * Copyright 2017 Chipsee
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#ifndef EISD_H
++#define EISD_H
++
++/*
++ *  Chipsee Custom Macro
++ *  10H: Hight light with pwm4 backlight
++ *  12L: Low res with 800600 resolution
++ */
++#define LVDS007
++
++#if defined(LVDS007)
++#define PANEL   "7"
++#define RES    "1024600"
++#define INTERFACE "RGB24"
++#elif defined(LVDS097)
++#define PANEL   "9"
++#define RES    "1024768-97"
++#define INTERFACE "RGB666"
++#elif defined(LVDS101)
++#define PANEL   "10"
++#define RES    "1280800"
++#define INTERFACE "RGB24"
++#elif defined(LVDS10H)
++#define PANEL   "10H"
++#define RES    "1280800"
++#define INTERFACE "RGB24"
++#elif defined(LVDS12L)
++#define PANEL   "12L"
++#define RES    "800600"
++#define INTERFACE "RGB24"
++#elif defined(LVDS120)
++#define PANEL   "12"
++#define RES    "1024768"
++#define INTERFACE "RGB24"
++#elif defined(LVDS150)
++#define PANEL   "15"
++#define RES    "1024768"
++#define INTERFACE "RGB24"
++#elif defined(LVDS170)
++#define PANEL   "17"
++#define RES    "12801024"
++#define INTERFACE "RGB24"
++#elif defined(LVDS190)
++#define PANEL   "19"
++#define RES    "1440900"
++#define INTERFACE "RGB24"
++#elif defined(LVDS215)
++#define PANEL   "21"
++#define RES    "19201080"
++#define INTERFACE "RGB24"
++#elif defined(LVDS280)
++#define PANEL   "28"
++#define RES    "19201080"
++#define INTERFACE "RGB24"
++#elif defined(LVDS550)
++#define PANEL   "55"
++#define RES    "19201080"
++#define INTERFACE "RGB24"
++#endif
++
++#endif /* EISD_H */
+diff --git a/include/configs/mx6eisd.h b/include/configs/mx6eisd.h
+index 4aed3ee..5b6eb8a 100644
+--- a/include/configs/mx6eisd.h
++++ b/include/configs/mx6eisd.h
+@@ -12,6 +12,8 @@
+ #include <asm/arch/imx-regs.h>
+ #include <asm/imx-common/gpio.h>
+ 
++#include "eisd.h"
++
+ #ifdef CONFIG_SPL
+ #define CONFIG_SPL_LIBCOMMON_SUPPORT
+ #define CONFIG_SPL_MMC_SUPPORT
+diff --git a/include/configs/mx6eisd_common.h b/include/configs/mx6eisd_common.h
+index db07886..4baa3a3 100644
+--- a/include/configs/mx6eisd_common.h
++++ b/include/configs/mx6eisd_common.h
+@@ -215,8 +215,8 @@
+ 		"fi\0" \
+ 	EMMC_ENV	  \
+ 	"smp=" CONFIG_SYS_NOSMP "\0"\
+-	"displayargs=video=mxcfb0:dev=ldb,if=RGB24 " \
+-		"video=mxcfb1:off video=mxcfb2:off\0" \
++	"displayargs=video=mxcfb0:dev=ldb,if=" INTERFACE " " \
++		"video=mxcfb1:off video=mxcfb2:off size=" PANEL "\0" \
+ 	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} " \
+ 		"root=${mmcroot} ${displayargs}\0" \
+ 	"loadbootscript=" \
+@@ -518,20 +518,6 @@
+ #endif
+ 
+ #ifdef IPU_OUTPUT_MODE_LVDS
+-/*#define LVDS043*/
+-#define LVDS007
+-/*#define LVDS097*/ /* Need Modify displayargs if=RGB666 too */
+-/*#define LVDS101*/
+-/*#define LVDS10H*/
+-/*#define LVDS12L*/
+-/*#define LVDS120*/
+-/*#define LVDS150*/ /* Same with LVDS120 */
+-/*#define LVDS170*/
+-/*#define LVDS180*/
+-/*#define LVDS190*/
+-/*#define LVDS215*/
+-/*#define LVDS280*/
+-/*#define LVDS550*/
+ 
+ #ifdef LVDS043
+     #define DISPLAY_WIDTH                           480
+-- 
+1.9.1
+

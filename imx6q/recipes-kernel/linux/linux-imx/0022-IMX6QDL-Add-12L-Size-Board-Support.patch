@@ -1,0 +1,160 @@
+From 4fdbd4a140c38e2c51655d0fbd22e9246da1a6dc Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Sat, 29 Dec 2018 16:50:00 +0800
+Subject: [PATCH] IMX6QDL Add 12L Size Board Support
+
+---
+ arch/arm/boot/dts/Makefile                    |  4 ++
+ arch/arm/boot/dts/imx6dl-eisd-800600-logo.dts | 10 +++++
+ arch/arm/boot/dts/imx6dl-eisd-800600.dts      | 10 +++++
+ arch/arm/boot/dts/imx6q-eisd-800600-logo.dts  | 10 +++++
+ arch/arm/boot/dts/imx6q-eisd-800600.dts       | 10 +++++
+ arch/arm/boot/dts/imx6qdl-eisd-800600.dtsi    | 53 +++++++++++++++++++++++++++
+ 6 files changed, 97 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6dl-eisd-800600-logo.dts
+ create mode 100644 arch/arm/boot/dts/imx6dl-eisd-800600.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-eisd-800600-logo.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-eisd-800600.dts
+ create mode 100644 arch/arm/boot/dts/imx6qdl-eisd-800600.dtsi
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 896edd6..f4b7515 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -301,6 +301,10 @@ dtb-$(CONFIG_ARCH_MXC) += \
+ 	imx6dl-eisd-1280800-logo.dtb \
+ 	imx6dl-eisd-1280800-gt9271.dtb \
+ 	imx6dl-eisd-1280800-gt9271-logo.dtb \
++	imx6q-eisd-800600.dtb \
++	imx6q-eisd-800600-logo.dtb \
++	imx6dl-eisd-800600.dtb \
++	imx6dl-eisd-800600-logo.dtb \
+ 	imx6q-eisd-1024768.dtb \
+ 	imx6q-eisd-1024768-logo.dtb \
+ 	imx6dl-eisd-1024768.dtb \
+diff --git a/arch/arm/boot/dts/imx6dl-eisd-800600-logo.dts b/arch/arm/boot/dts/imx6dl-eisd-800600-logo.dts
+new file mode 100644
+index 0000000..00640b6
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6dl-eisd-800600-logo.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6dl-eisd-800600.dts"
++#include "imx6qdl-eisd-logo.dtsi"
+diff --git a/arch/arm/boot/dts/imx6dl-eisd-800600.dts b/arch/arm/boot/dts/imx6dl-eisd-800600.dts
+new file mode 100644
+index 0000000..e8184be
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6dl-eisd-800600.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6dl-eisd.dts"
++#include "imx6qdl-eisd-800600.dtsi"
+diff --git a/arch/arm/boot/dts/imx6q-eisd-800600-logo.dts b/arch/arm/boot/dts/imx6q-eisd-800600-logo.dts
+new file mode 100644
+index 0000000..fcb2ecc
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-eisd-800600-logo.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-eisd-800600.dts"
++#include "imx6qdl-eisd-logo.dtsi"
+diff --git a/arch/arm/boot/dts/imx6q-eisd-800600.dts b/arch/arm/boot/dts/imx6q-eisd-800600.dts
+new file mode 100644
+index 0000000..8bada4a
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-eisd-800600.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-eisd.dts"
++#include "imx6qdl-eisd-800600.dtsi"
+diff --git a/arch/arm/boot/dts/imx6qdl-eisd-800600.dtsi b/arch/arm/boot/dts/imx6qdl-eisd-800600.dtsi
+new file mode 100644
+index 0000000..eb76cc9
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qdl-eisd-800600.dtsi
+@@ -0,0 +1,53 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++/ {
++	backlight {
++	        compatible = "pwm-backlight";
++	        pwms = <&pwm4 0 5000000>;
++        	brightness-levels = <0 4 8 16 32 64 128 255>;
++	        default-brightness-level = <7>;
++		pwm-invert = <1>;
++        	status = "okay";
++	};
++};
++
++&ldb {
++	status = "okay";
++
++	lvds-channel@0 {
++                fsl,data-mapping = "spwg";
++                fsl,data-width = <24>;
++                primary;
++                status = "okay";
++
++		display-timings {
++                        native-mode = <&timing012>;
++			timing012: AUO120 {
++                                clock-frequency = <40000000>;
++                                hactive = <800>;
++                                vactive = <600>;
++                                hback-porch = <127>;
++                                hfront-porch = <127>;
++                                vback-porch = <32>;
++                                vfront-porch = <32>;
++                                hsync-len = <2>;
++                                vsync-len = <2>;
++                        };
++		};	
++	};
++
++	lvds-channel@1 {
++                status = "disabled";
++	};
++};
++
++&pwm4 {
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_pwm4>;
++        status = "okay";
++};
+-- 
+1.9.1
+

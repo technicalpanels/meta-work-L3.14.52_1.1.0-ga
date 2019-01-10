@@ -1,0 +1,117 @@
+From f4186d7930c2929927b127bade2ed7b43c7a8bc1 Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Wed, 2 Jan 2019 14:37:50 +0800
+Subject: [PATCH] Add filter noise feature for TSC2007 And add this feature for
+ 12_15 size Board
+
+---
+ arch/arm/boot/dts/imx6qdl-eisd-1024768.dtsi |  6 ++++
+ drivers/input/touchscreen/tsc2007.c         | 50 +++++++++++++++++++++++++----
+ 2 files changed, 49 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6qdl-eisd-1024768.dtsi b/arch/arm/boot/dts/imx6qdl-eisd-1024768.dtsi
+index 597e95c..b00b43c 100644
+--- a/arch/arm/boot/dts/imx6qdl-eisd-1024768.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-eisd-1024768.dtsi
+@@ -51,3 +51,9 @@
+         pinctrl-0 = <&pinctrl_pwm4>;
+         status = "okay";
+ };
++
++&i2c1 {
++	tsc2007@48 {
++		has-noise = <1>;
++	};
++};
+diff --git a/drivers/input/touchscreen/tsc2007.c b/drivers/input/touchscreen/tsc2007.c
+index 1c0d874..85a56a2 100644
+--- a/drivers/input/touchscreen/tsc2007.c
++++ b/drivers/input/touchscreen/tsc2007.c
+@@ -60,6 +60,10 @@
+ #define READ_X		(ADC_ON_12BIT | TSC2007_MEASURE_X)
+ #define PWRDOWN		(TSC2007_12BIT | TSC2007_POWER_OFF_IRQ_EN)
+ 
++/* Add filter noise support */
++int noise = 0;
++unsigned int backup_x = 0, backup_y = 0;
++
+ struct ts_event {
+ 	u16	x;
+ 	u16	y;
+@@ -175,6 +179,7 @@ static irqreturn_t tsc2007_soft_irq(int irq, void *handle)
+ 	struct tsc2007 *ts = handle;
+ 	struct input_dev *input = ts->input;
+ 	struct ts_event tc;
++	unsigned int    val_x = ~0, val_y = ~0, diffx = 0, diffy = 0;
+ 	u32 rt;
+ 
+ 	while (!ts->stopped && tsc2007_is_pen_down(ts)) {
+@@ -197,13 +202,33 @@ static irqreturn_t tsc2007_soft_irq(int irq, void *handle)
+ 			dev_dbg(&ts->client->dev,
+ 				"DOWN point(%4d,%4d), pressure (%4u)\n",
+ 				tc.x, tc.y, rt);
+-
+-			input_report_key(input, BTN_TOUCH, 1);
+-			input_report_abs(input, ABS_X, tc.x);
+-			input_report_abs(input, ABS_Y, tc.y);
+-			input_report_abs(input, ABS_PRESSURE, rt);
+-
+-			input_sync(input);
++			/* Add filter noise support */
++			val_x = tc.x;
++			val_y = tc.y;
++			if (val_x > backup_x){
++				diffx = val_x - backup_x;
++				diffy = val_y - backup_y;
++			} else {
++				diffx = backup_x - val_x;
++				diffy = backup_y - val_y;
++			}
++			backup_x = val_x;
++			backup_y = val_y;
++			if (!!noise) {
++				if((diffx < 150) && (diffy <150)){
++					input_report_key(input, BTN_TOUCH, 1);
++					input_report_abs(input, ABS_X, val_x);
++					input_report_abs(input, ABS_Y, val_y);
++					input_report_abs(input, ABS_PRESSURE, rt);
++					input_sync(input);
++				}
++			} else {
++				input_report_key(input, BTN_TOUCH, 1);
++				input_report_abs(input, ABS_X, tc.x);
++				input_report_abs(input, ABS_Y, tc.y);
++				input_report_abs(input, ABS_PRESSURE, rt);
++				input_sync(input);
++			}
+ 
+ 		} else {
+ 			/*
+@@ -219,6 +244,11 @@ static irqreturn_t tsc2007_soft_irq(int irq, void *handle)
+ 	}
+ 
+ 	dev_dbg(&ts->client->dev, "UP\n");
++	/* Add filter noise support */
++	if (!!noise) {
++		backup_x = 0;
++		backup_y = 0;
++	}
+ 
+ 	input_report_key(input, BTN_TOUCH, 0);
+ 	input_report_abs(input, ABS_PRESSURE, 0);
+@@ -325,6 +355,12 @@ static int tsc2007_probe_dt(struct i2c_client *client, struct tsc2007 *ts)
+ 		return -EINVAL;
+ 	}
+ 
++	/* Add filter noise support */
++        if (!of_property_read_u32(np, "has-noise", &val32))
++                noise = val32;
++        else
++                noise = 0;
++
+ 	ts->gpio = of_get_gpio(np, 0);
+ 	if (gpio_is_valid(ts->gpio))
+ 		ts->get_pendown_state = tsc2007_get_pendown_state_gpio;
+-- 
+1.9.1
+
