@@ -1,0 +1,25 @@
+From 291f2109fc8316aa24d816c3731dd5367a04820e Mon Sep 17 00:00:00 2001
+From: leavs <leavs_o@126.com>
+Date: Sat, 12 Jan 2019 11:13:45 +0800
+Subject: [PATCH] Remove uboot logo display feature which has bug now
+
+---
+ include/configs/mx6ulipc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/configs/mx6ulipc.h b/include/configs/mx6ulipc.h
+index 12e9293..f4a62ae 100644
+--- a/include/configs/mx6ulipc.h
++++ b/include/configs/mx6ulipc.h
+@@ -125,7 +125,7 @@
+ #define CONFIG_BOOTARGS_CMA_SIZE   "cma=96M "
+ 
+ 
+-#define CONFIG_VIDEO
++/* #define CONFIG_VIDEO */
+ 
+ /* Command definition */
+ #include <config_cmd_default.h>
+-- 
+1.9.1
+
