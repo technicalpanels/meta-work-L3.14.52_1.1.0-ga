@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=WIFI
+Exec=/usr/bin/wifi
+Icon=wifi.png
+Terminal=false
+Type=Application
+X-MB-SingleInstance=true
+Comment=WIFI
+StartupNotify=false

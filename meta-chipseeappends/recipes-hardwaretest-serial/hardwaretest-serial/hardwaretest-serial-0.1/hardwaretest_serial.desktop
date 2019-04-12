@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=HT_Serial
+Exec=/usr/bin/hardwaretest_serial
+Icon=serial.png
+Terminal=false
+Type=Application
+X-MB-SingleInstance=true
+Comment=hardwaretest_serial
+StartupNotify=false

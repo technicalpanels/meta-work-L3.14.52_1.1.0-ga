@@ -1,0 +1,100 @@
+#!/bin/sh
+
+# Global Variate
+for s in $(cat /proc/cmdline); do
+	case $s in
+	size=7)
+	CAL=99-calibration-7.conf
+	SIZE=7
+	;;
+	size=9)
+	CAL=99-calibration-9_7.conf
+	SIZE=9
+	;;
+	size=10)
+	CAL=99-calibration-10_1.conf
+	SIZE=10
+	;;
+	size=10H)
+	CAL=99-calibration-10_1H.conf
+	SIZE=10H
+	;;
+	size=12L)
+	CAL=99-calibration-12L.conf
+	SIZE=12L
+	;;
+	size=12)
+	CAL=99-calibration-12.conf
+	SIZE=12
+	;;
+	size=15)
+	CAL=99-calibration-15.conf
+	SIZE=15
+	;;
+	size=17)
+	CAL=99-calibration-17.conf
+	SIZE=17
+	;;
+	size=19)
+	CAL=99-calibration-19.conf
+	SIZE=19
+	;;
+	size=21)
+	CAL=99-calibration-21_5.conf
+	SIZE=21
+	;;
+	size=28)
+	CAL=99-calibration-28.conf
+	SIZE=28
+	;;
+	size=55)
+	CAL=99-calibration-55.conf
+	SIZE=55
+	;;
+	*)
+	;;
+	esac
+done
+
+# Buzzer
+echo 80 >/sys/class/gpio/export
+echo out >/sys/class/gpio/gpio80/direction
+chmod a+w /sys/class/gpio/gpio80/value
+ln -sf /sys/class/gpio/gpio80/value /dev/buzzer
+
+# GPIO
+# 7V1 OUT="95 94 87 130" IN="106 29 30 28" 7V2/V3 is follow
+if [ $SIZE == "7" ]; then
+    OUT="130 87 94 95"
+    IN="29 106 28 30"
+else
+    OUT="106 30 95 87"
+    IN="29 28 94 130"
+fi
+
+num=1
+for i in $OUT; do
+echo $i > /sys/class/gpio/export
+echo out > /sys/class/gpio/gpio$i/direction
+chmod a+x /sys/class/gpio/gpio$i/value
+ln -sf /sys/class/gpio/gpio$i/value /dev/chipsee-gpio$num
+num=`expr $num + 1`
+done
+
+sleep 1
+
+for i in $IN; do
+echo $i > /sys/class/gpio/export
+echo in > /sys/class/gpio/gpio$i/direction
+chmod a+r /sys/class/gpio/gpio$i/value
+ln -sf /sys/class/gpio/gpio$i/value /dev/chipsee-gpio$num
+num=`expr $num + 1`
+done
+
+echo "GPIO Init done!!"
+
+# Headphone Playback Volume
+amixer cset numid=5 127
+
+# TSC2007 Touch
+cp /etc/chipseeinit/cal/$CAL /etc/X11/xorg.conf.d/99-calibration.conf

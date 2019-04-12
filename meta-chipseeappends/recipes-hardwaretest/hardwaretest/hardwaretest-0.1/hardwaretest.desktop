@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=HT
+Exec=/usr/bin/hardwaretest
+Icon=test.png
+Terminal=false
+Type=Application
+X-MB-SingleInstance=true
+Comment=hardwaretest
+StartupNotify=false
