@@ -1,5 +1,5 @@
-# meta-work
-Board Support
+# meta-work-L3.14.52_1.1.0-ga
+Board Support for L3.14.52_1.1.0-ga
 
 # imx6ul
 imx6ul platform support
