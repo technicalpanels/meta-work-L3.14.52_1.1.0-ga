@@ -1,0 +1,32 @@
+From 107b68db2b1c455f19a0ee62da0782756ed0ef69 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Thu, 25 Apr 2019 17:14:58 +0800
+Subject: [PATCH] Enable POSIX_MQUEUE FHANDLE CFG80211_WEXT Config
+
+---
+ arch/arm/configs/imx_v7_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/configs/imx_v7_defconfig b/arch/arm/configs/imx_v7_defconfig
+index ad5c6da..d301f0d 100755
+--- a/arch/arm/configs/imx_v7_defconfig
++++ b/arch/arm/configs/imx_v7_defconfig
+@@ -1,5 +1,7 @@
+ CONFIG_KERNEL_LZO=y
+ CONFIG_SYSVIPC=y
++CONFIG_POSIX_MQUEUE=y
++CONFIG_FHANDLE=y
+ CONFIG_NO_HZ=y
+ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_IKCONFIG=y
+@@ -87,6 +89,7 @@ CONFIG_BT_HCIUART_ATH3K=y
+ CONFIG_BT_HCIBCM203X=y
+ CONFIG_BT_ATH3K=y
+ CONFIG_CFG80211=y
++CONFIG_CFG80211_WEXT=y
+ CONFIG_MAC80211=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+-- 
+2.7.4
+

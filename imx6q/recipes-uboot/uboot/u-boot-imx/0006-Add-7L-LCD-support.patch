@@ -1,0 +1,101 @@
+From fbad93275b10b3b156c2d92a6ab14d5ee796a1b1 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Sun, 28 Apr 2019 17:54:33 +0800
+Subject: [PATCH] Add 7L LCD support
+
+---
+ include/configs/eisd.h           | 12 +++++++++++-
+ include/configs/mx6eisd_common.h | 36 ++++++++++++++++++++----------------
+ 2 files changed, 31 insertions(+), 17 deletions(-)
+
+diff --git a/include/configs/eisd.h b/include/configs/eisd.h
+index 4cbb9a6..16c0ee4 100644
+--- a/include/configs/eisd.h
++++ b/include/configs/eisd.h
+@@ -15,7 +15,17 @@
+  */
+ #define LVDS007
+ 
+-#if defined(LVDS007)
++#if defined(LCD07L)
++#define DDEV	"lcd"
++#else
++#define DDEV	"ldb"
++#endif
++
++#if defined(LCD07L)
++#define PANEL   "7L"
++#define RES    "800480"
++#define INTERFACE "RGB24"
++#elif defined(LVDS007)
+ #define PANEL   "7"
+ #define RES    "1024600"
+ #define INTERFACE "RGB24"
+diff --git a/include/configs/mx6eisd_common.h b/include/configs/mx6eisd_common.h
+index 4baa3a3..4bd2dae 100644
+--- a/include/configs/mx6eisd_common.h
++++ b/include/configs/mx6eisd_common.h
+@@ -215,7 +215,7 @@
+ 		"fi\0" \
+ 	EMMC_ENV	  \
+ 	"smp=" CONFIG_SYS_NOSMP "\0"\
+-	"displayargs=video=mxcfb0:dev=ldb,if=" INTERFACE " " \
++	"displayargs=video=mxcfb0:dev=" DDEV ",if=" INTERFACE " " \
+ 		"video=mxcfb1:off video=mxcfb2:off size=" PANEL "\0" \
+ 	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} " \
+ 		"root=${mmcroot} ${displayargs}\0" \
+@@ -453,8 +453,12 @@
+ #ifdef CONFIG_UBOOT_LOGO_ENABLE
+ 	/* Select one of the output mode */
+      /* #define IPU_OUTPUT_MODE_HDMI */
+-	#define IPU_OUTPUT_MODE_LVDS
+-     /*	#define IPU_OUTPUT_MODE_LCD */
++
++#if defined(LCD07L)
++#define IPU_OUTPUT_MODE_LCD
++#else
++#define IPU_OUTPUT_MODE_LVDS
++#endif
+ 
+ 	#define CONFIG_FB_BASE	(CONFIG_SYS_TEXT_BASE + 0x1000000)
+ 	#define UBOOT_LOGO_BMP_ADDR 0x00100000
+@@ -728,23 +732,23 @@
+ 	/* For LCD, 800*480 resolution */
+ 	#define DISPLAY_WIDTH	800
+ 	#define DISPLAY_HEIGHT	480
+-	#define DISPLAY_BPP		32
+-	#define DISPLAY_IF_BPP	16  /* RGB565 interface */
++	#define DISPLAY_BPP	32
++	#define DISPLAY_IF_BPP	24  /* RGB24 interface */
+ 
+-	#define DISPLAY_HSYNC_START	40
+-	#define DISPLAY_HSYNC_END		60
+-	#define DISPLAY_HSYNC_WIDTH	20
++	#define DISPLAY_HSYNC_START	85
++	#define DISPLAY_HSYNC_END	15
++	#define DISPLAY_HSYNC_WIDTH	28
+ 
+-	#define DISPLAY_VSYNC_START	10
+-	#define DISPLAY_VSYNC_END		10
+-	#define DISPLAY_VSYNC_WIDTH	10
++	#define DISPLAY_VSYNC_START	34
++	#define DISPLAY_VSYNC_END	10
++	#define DISPLAY_VSYNC_WIDTH	1
+ 
+-	#define DISPLAY_PIX_CLOCK	27000000  /* (DISPLAY_HSYNC_START + DISPLAY_HSYNC_END + DISPLAY_HSYNC_WIDTH + DISPLAY_WIDTH) * (DISPLAY_VSYNC_START + DISPLAY_VSYNC_END + DISPLAY_VSYNC_WIDTH + DISPLAY_HEIGHT) * refresh rate (60Hz) */
++	#define DISPLAY_PIX_CLOCK	29232000  /* (DISPLAY_HSYNC_START + DISPLAY_HSYNC_END + DISPLAY_HSYNC_WIDTH + DISPLAY_WIDTH) * (DISPLAY_VSYNC_START + DISPLAY_VSYNC_END + DISPLAY_VSYNC_WIDTH + DISPLAY_HEIGHT) * refresh rate (60Hz) */
+ 
+-	#define DISPLAY_VSYNC_POLARITY			0
+-	#define DISPLAY_HSYNC_POLARITY			0
+-	#define DISPLAY_CLOCK_POLARITY			1
+-	#define DISPLAY_DATA_POLARITY				0
++	#define DISPLAY_VSYNC_POLARITY			1
++	#define DISPLAY_HSYNC_POLARITY			1
++	#define DISPLAY_CLOCK_POLARITY			0
++	#define DISPLAY_DATA_POLARITY			0
+ 	#define DISPLAY_DATA_ENABLE_POLARITY		1
+ 
+ 	#define IPU_NUM			1  /* 1 for IPU1, 2 for IPU2.*/
+-- 
+2.7.4
+
