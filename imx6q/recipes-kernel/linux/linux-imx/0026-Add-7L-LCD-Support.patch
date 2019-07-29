@@ -1,0 +1,33 @@
+From fc14a17bf59c8400beb663007ce3cf1f9dfa6036 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Wed, 26 Jun 2019 16:14:10 +0800
+Subject: [PATCH] Add 7L LCD Support
+
+---
+ drivers/video/mxc/mxc_lcdif.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/video/mxc/mxc_lcdif.c b/drivers/video/mxc/mxc_lcdif.c
+index d635edd..17e7311 100644
+--- a/drivers/video/mxc/mxc_lcdif.c
++++ b/drivers/video/mxc/mxc_lcdif.c
+@@ -37,8 +37,15 @@ struct mxc_lcdif_data {
+ 
+ static struct fb_videomode lcdif_modedb[] = {
+ 	{
++	/* 800x480 @ 60 Hz , pixel clk @ 33.3MHz */
++	"AUOG070-WVGA", 60, 800, 480, 34209, 85, 15, 34, 10, 28, 1,
++	FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, 
++	FB_VMODE_NONINTERLACED,
++	0,},
++	{
+ 	/* 800x480 @ 57 Hz , pixel clk @ 27MHz */
+-	"CLAA-WVGA", 57, 800, 480, 37037, 40, 60, 10, 10, 20, 10,
++	//"CLAA-WVGA", 57, 800, 480, 37037, 40, 60, 10, 10, 20, 10,
++	"CLAA-WVGA", 57, 800, 480, 30030, 25, 75, 10, 10, 20, 10,
+ 	FB_SYNC_CLK_LAT_FALL,
+ 	FB_VMODE_NONINTERLACED,
+ 	0,},
+-- 
+2.7.4
+

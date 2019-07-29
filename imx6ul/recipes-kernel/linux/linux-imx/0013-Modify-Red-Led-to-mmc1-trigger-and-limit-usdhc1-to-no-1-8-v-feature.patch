@@ -1,0 +1,36 @@
+From 4731274310ac4f4b339789d018421ba79151908c Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Mon, 3 Jun 2019 15:43:03 +0800
+Subject: [PATCH] Modify Red Led to mmc1 trigger and limit usdhc1 to no-1-8-v
+ feature.
+
+---
+ arch/arm/boot/dts/imx6ul-eisd.dts | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6ul-eisd.dts b/arch/arm/boot/dts/imx6ul-eisd.dts
+index 76a9962..1ae7158 100644
+--- a/arch/arm/boot/dts/imx6ul-eisd.dts
++++ b/arch/arm/boot/dts/imx6ul-eisd.dts
+@@ -82,8 +82,8 @@
+ 		pinctrl-0 = <&pinctrl_gpio_leds>;
+ 		
+ 		/* RED */
+-		led-timer {
+-			linux,default-trigger = "timer";
++		led-mmc1 {
++			linux,default-trigger = "mmc1";
+ 			gpios = <&gpio5 1 0>;
+ 			default-state = "off";
+ 		};
+@@ -260,6 +260,7 @@
+ 	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
+ 	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
+ 	cd-gpios = <&gpio1 19 0>;
++	no-1-8-v;
+ 	keep-power-in-suspend;
+ 	enable-sdio-wakeup;
+ 	status = "okay";
+-- 
+2.7.4
+

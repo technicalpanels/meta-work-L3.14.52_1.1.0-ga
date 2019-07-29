@@ -1,0 +1,25 @@
+From 17d5682828b5a9441320903da2ccaf37d3645732 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Fri, 24 May 2019 18:50:19 +0800
+Subject: [PATCH] Modify DCLK pol to 0
+
+---
+ arch/arm/boot/dts/imx6ul-eisd.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/imx6ul-eisd.dts b/arch/arm/boot/dts/imx6ul-eisd.dts
+index c797586..76a9962 100644
+--- a/arch/arm/boot/dts/imx6ul-eisd.dts
++++ b/arch/arm/boot/dts/imx6ul-eisd.dts
+@@ -182,7 +182,7 @@
+ 				hsync-active = <0>;
+ 				vsync-active = <0>;
+ 				de-active = <1>;
+-				pixelclk-active = <0>;
++				pixelclk-active = <1>;
+ 			};
+ 		};
+ 	};
+-- 
+2.7.4
+

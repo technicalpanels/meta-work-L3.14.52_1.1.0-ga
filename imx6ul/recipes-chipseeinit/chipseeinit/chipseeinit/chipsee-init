@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# GPIO_0(GPIO_0)   		-OUT1
+# GPIO_1(GPIO_1)   		-OUT2
+# GPIO_2(GPIO_2)   		-OUT3
+# GPIO_3(GPIO_3)   		-OUT4
+# GPIO5_9(SNVS_TAMPER9) 	-IN1
+# GPIO5_8(SNVS_TAMPER8) 	-IN2
+# GPIO_8(GPIO_8)    		-IN3
+# GPIO_4(GPIO_4)     		-IN4
+
+# GPIO5_3(SNVS_TAMPER3)     	-buzzer
+
+SIZE=7
+CAL=99-calibration-7.conf
+
+# Buzzer
+echo 131 >/sys/class/gpio/export
+echo out >/sys/class/gpio/gpio131/direction
+chmod a+w /sys/class/gpio/gpio131/value
+ln -sf /sys/class/gpio/gpio131/value /dev/buzzer
+
+# GPIO
+if [ $SIZE == "7" ]; then
+    OUT="0 1 2 3"
+    IN="137 136 8 4"
+fi
+
+num=1
+for i in $OUT; do
+echo $i > /sys/class/gpio/export
+echo out > /sys/class/gpio/gpio$i/direction
+chmod a+x /sys/class/gpio/gpio$i/value
+ln -sf /sys/class/gpio/gpio$i/value /dev/chipsee-gpio$num
+num=`expr $num + 1`
+done
+
+sleep 1
+
+for i in $IN; do
+echo $i > /sys/class/gpio/export
+echo in > /sys/class/gpio/gpio$i/direction
+chmod a+r /sys/class/gpio/gpio$i/value
+ln -sf /sys/class/gpio/gpio$i/value /dev/chipsee-gpio$num
+num=`expr $num + 1`
+done
+
+# Touch
+cp /etc/chipseeinit/cal/$CAL /etc/X11/xorg.conf.d/99-calibration.conf
+
+# Volume
+amixer cset numid=11 100
+
+# Time Update
+hwclock -s

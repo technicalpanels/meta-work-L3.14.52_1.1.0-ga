@@ -13,7 +13,7 @@ DEPENDS = "fsl-rc-local"
 
 SRC_URI = "file://cal \
 	   file://rc.local \
-	   file://chipsee-init"
+"
 
 S = "${WORKDIR}"
 

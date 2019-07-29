@@ -1,0 +1,83 @@
+From d5987eb1a527d0041bc68b924ce6f54efe1cda54 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Thu, 20 Jun 2019 17:56:15 +0800
+Subject: [PATCH] Add eMMC Test bootcmd support
+
+---
+ include/configs/eisd.h           |  5 +++++
+ include/configs/mx6eisd_common.h | 22 ++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+
+diff --git a/include/configs/eisd.h b/include/configs/eisd.h
+index 16c0ee4..61b448f 100644
+--- a/include/configs/eisd.h
++++ b/include/configs/eisd.h
+@@ -9,6 +9,11 @@
+ #define EISD_H
+ 
+ /*
++ *  Used for eMMC Test
++ */
++/* #define CONFIG_EMMCTEST */
++
++/*
+  *  Chipsee Custom Macro
+  *  10H: Hight light with pwm4 backlight
+  *  12L: Low res with 800600 resolution
+diff --git a/include/configs/mx6eisd_common.h b/include/configs/mx6eisd_common.h
+index 4bd2dae..7290f43 100644
+--- a/include/configs/mx6eisd_common.h
++++ b/include/configs/mx6eisd_common.h
+@@ -182,6 +182,11 @@
+ 		"bootcmd=run bootcmd_sata \0"
+ 
+ #else
++#define EMMCTEST_ENV \
++        "mmcscan=if fatload mmc 2:1 ${loadaddr} ${image}; then setenv mmcdev 2; " \
++        "setenv mmcroot /dev/mmcblk3p2 rootwait rw; else setenv mmcdev 0; " \
++        "setenv mmcroot /dev/mmcblk1p2 rootwait rw; fi; \0"
++
+ #define CONFIG_EXTRA_ENV_SETTINGS \
+ 	CONFIG_MFG_ENV_SETTINGS \
+ 	"epdc_waveform=epdc_splash.bin\0" \
+@@ -214,6 +219,7 @@
+ 			"fi; "	\
+ 		"fi\0" \
+ 	EMMC_ENV	  \
++	EMMCTEST_ENV \
+ 	"smp=" CONFIG_SYS_NOSMP "\0"\
+ 	"displayargs=video=mxcfb0:dev=" DDEV ",if=" INTERFACE " " \
+ 		"video=mxcfb1:off video=mxcfb2:off size=" PANEL "\0" \
+@@ -265,6 +271,21 @@
+ 			"bootz; " \
+ 		"fi;\0"
+ 
++#if defined(CONFIG_EMMCTEST)
++#define CONFIG_BOOTCOMMAND \
++	"run mmcscan;" \
++        "mmc dev ${mmcdev};" \
++        "if mmc rescan; then " \
++                "if run loadbootscript; then " \
++                "run bootscript; " \
++                "else " \
++                        "if run loadimage; then " \
++                                "run mmcboot; " \
++                        "else run netboot; " \
++                        "fi; " \
++                "fi; " \
++        "else run netboot; fi"
++#else
+ #define CONFIG_BOOTCOMMAND \
+ 	"mmc dev ${mmcdev};" \
+ 	"if mmc rescan; then " \
+@@ -278,6 +299,7 @@
+ 		"fi; " \
+ 	"else run netboot; fi"
+ #endif
++#endif
+ 
+ #define CONFIG_ARP_TIMEOUT     200UL
+ 
+-- 
+2.7.4
+

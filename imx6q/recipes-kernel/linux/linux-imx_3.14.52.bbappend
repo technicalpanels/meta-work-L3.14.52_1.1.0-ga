@@ -25,6 +25,8 @@ SRC_URI +="file://0001-keep-logo-from-uboot-to-kernel.patch \
 	   file://0023-Add-filter-noise-feature-for-TSC2007-And-add-this-fe.patch \
 	   file://0024-IMX6QDL-Add-9.7-Size-Board-Support.patch \
 	   file://0025-Add-Quectel-EC20-R2.0-Support-And-Remove-CRYPTO_SHA1.patch \
+	   file://0026-Add-7L-LCD-Support.patch \
+	   file://0027-Fix-1000Mbps-ethernet-upload-speed-slow-issue.patch \
 "
 KERNEL_DEVICETREE ="imx6q-eisd-1024600.dtb \
 		     imx6q-eisd-1024600-no-uart-dma.dtb \

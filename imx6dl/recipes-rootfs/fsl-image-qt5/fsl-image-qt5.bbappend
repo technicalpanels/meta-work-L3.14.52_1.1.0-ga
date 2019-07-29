@@ -14,4 +14,5 @@ IMAGE_INSTALL_append = "openssh-sftp-server \
 			4ginit \
 			hardwaretest \
 			hardwaretest-serial \
+			lcdtester \
 			network"

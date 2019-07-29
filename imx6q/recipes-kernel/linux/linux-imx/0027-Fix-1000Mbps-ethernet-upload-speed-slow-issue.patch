@@ -1,0 +1,172 @@
+From b418216e44f288562aaf0108580b1991e163ef00 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Mon, 29 Jul 2019 16:11:32 +0800
+Subject: [PATCH] Fix 1000Mbps ethernet upload speed slow issue
+
+---
+ arch/arm/boot/dts/imx6qdl-eisd.dtsi | 40 +++++++++++++++++++--
+ arch/arm/configs/imx_v7_defconfig   |  1 +
+ arch/arm/mach-imx/mach-imx6q.c      | 69 ++++++++++++++++++++++---------------
+ 3 files changed, 80 insertions(+), 30 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6qdl-eisd.dtsi b/arch/arm/boot/dts/imx6qdl-eisd.dtsi
+index 3975855..37484b4 100644
+--- a/arch/arm/boot/dts/imx6qdl-eisd.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-eisd.dtsi
+@@ -285,9 +285,10 @@
+ 
+ &fec {
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_enet>;
++	pinctrl-0 = <&pinctrl_enet_ar8035>;
+ 	phy-mode = "rgmii";
+-	/* leavs patched for uart2 phy-reset-gpios = <&gpio1 25 0>; */
++	phy-reset-duration = <2>;
++	phy-reset-gpios = <&gpio1 25 0>;
+ 	fsl,magic-packet;
+ 	status = "okay";
+ };
+@@ -527,7 +528,6 @@
+ 				MX6QDL_PAD_EIM_D21__GPIO3_IO21  0x80000000
+ 				MX6QDL_PAD_EIM_D16__GPIO3_IO16  0x80000000
+ 				MX6QDL_PAD_EIM_BCLK__GPIO6_IO31 0x80000000
+-				MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25 0x80000000
+ 				/* leavs patched for uart2 MX6QDL_PAD_EIM_D26__GPIO3_IO26 0x80000000 */
+ 				MX6QDL_PAD_EIM_CS1__GPIO2_IO24 0x80000000
+ 				MX6QDL_PAD_ENET_RXD0__GPIO1_IO27 0x80000000
+@@ -597,6 +597,40 @@
+ 			>;
+ 		};
+ 
++		pinctrl_enet_ar8035: ar8035enetgrp {
++                        fsl,pins = <
++                                MX6QDL_PAD_ENET_MDIO__ENET_MDIO         0x1b0b0
++                                MX6QDL_PAD_ENET_MDC__ENET_MDC           0x1b0b0
++
++                                MX6QDL_PAD_RGMII_TXC__RGMII_TXC         0x1b0b0
++                                MX6QDL_PAD_RGMII_TD0__RGMII_TD0         0x1b0b0
++                                MX6QDL_PAD_RGMII_TD1__RGMII_TD1         0x1b0b0
++                                MX6QDL_PAD_RGMII_TD2__RGMII_TD2         0x1b0b0
++                                MX6QDL_PAD_RGMII_TD3__RGMII_TD3         0x1b0b0
++                                MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL   0x1b0b0
++
++                                /* AR8035 CLK_25M --> ENET_REF_CLK (V22) */
++                                /*MX6QDL_PAD_ENET_REF_CLK__ENET_TX_CLK  0x1b0b0*/
++                                MX6QDL_PAD_ENET_REF_CLK__ENET_TX_CLK    0x0a0b1
++
++                                MX6QDL_PAD_RGMII_RXC__RGMII_RXC         0x1b0b0
++                                /* PHYADDR#0: pull down */
++                                MX6QDL_PAD_RGMII_RD0__RGMII_RD0         0x130b0
++                                /* PHYADDR#1: pull down */
++                                MX6QDL_PAD_RGMII_RD1__RGMII_RD1         0x130b0
++                                /* MODE#0: pull down */
++                                MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL   0x130b0
++                                /* MODE#1: pull down */
++                                MX6QDL_PAD_RGMII_RD2__RGMII_RD2         0x130b0
++                                /* MODE#3: pull up */
++                                MX6QDL_PAD_RGMII_RD3__RGMII_RD3         0x1b0b0
++                                /* AR8035 reset */
++                                MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25      0x80000000
++
++                                MX6QDL_PAD_GPIO_16__ENET_REF_CLK        0x4001b0a8
++                        >;
++                };
++
+ 		pinctrl_enet_irq: enetirqgrp {
+ 			fsl,pins = <
+ 				MX6QDL_PAD_GPIO_6__ENET_IRQ		0x000b1
+diff --git a/arch/arm/configs/imx_v7_defconfig b/arch/arm/configs/imx_v7_defconfig
+index 0bc51a0..a5cda09 100644
+--- a/arch/arm/configs/imx_v7_defconfig
++++ b/arch/arm/configs/imx_v7_defconfig
+@@ -150,6 +150,7 @@ CONFIG_SMC91X=y
+ CONFIG_SMC911X=y
+ CONFIG_SMSC911X=y
+ # CONFIG_NET_VENDOR_STMICRO is not set
++CONFIG_AT803X_PHY=y
+ CONFIG_MICREL_PHY=y
+ CONFIG_PPP=y
+ CONFIG_PPP_BSDCOMP=y
+diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
+index 1a16152..5d22c5f 100644
+--- a/arch/arm/mach-imx/mach-imx6q.c
++++ b/arch/arm/mach-imx/mach-imx6q.c
+@@ -247,33 +247,48 @@ static int ar8031_phy_fixup(struct phy_device *dev)
+ 
+ static int ar8035_phy_fixup(struct phy_device *dev)
+ {
+-	u16 val;
+-
+-	/* Ar803x phy SmartEEE feature cause link status generates glitch,
+-	 * which cause ethernet link down/up issue, so disable SmartEEE
+-	 */
+-	phy_write(dev, 0xd, 0x3);
+-	phy_write(dev, 0xe, 0x805d);
+-	phy_write(dev, 0xd, 0x4003);
+-
+-	val = phy_read(dev, 0xe);
+-	phy_write(dev, 0xe, val & ~(1 << 8));
+-
+-	/*
+-	 * Enable 125MHz clock from CLK_25M on the AR8031.  This
+-	 * is fed in to the IMX6 on the ENET_REF_CLK (V22) pad.
+-	 * Also, introduce a tx clock delay.
+-	 *
+-	 * This is the same as is the AR8031 fixup.
+-	 */
+-	ar8031_phy_fixup(dev);
+-
+-	/*check phy power*/
+-	val = phy_read(dev, 0x0);
+-	if (val & BMCR_PDOWN)
+-		phy_write(dev, 0x0, val & ~BMCR_PDOWN);
+-
+-	return 0;
++        u16 val;
++
++        /* Set RGMII IO voltage to 1.8V */
++        phy_write(dev, 0x1d, 0x1f);
++        phy_write(dev, 0x1e, 0x8);
++
++        /* Ar803x phy SmartEEE feature cause link status generates glitch,
++         * which cause ethernet link down/up issue, so disable SmartEEE
++         */
++        phy_write(dev, 0xd, 0x3);
++        phy_write(dev, 0xe, 0x805d);
++        phy_write(dev, 0xd, 0x4003);
++
++        val = phy_read(dev, 0xe);
++        phy_write(dev, 0xe, val & ~(1 << 8));
++
++        /*
++         * Enable 125MHz clock from CLK_25M on the AR8035.  This
++         * is fed in to the IMX6 on the ENET_REF_CLK (V22) pad.
++         * Also, introduce a tx clock delay.
++         */
++        phy_write(dev, 0xd, 0x7);
++        phy_write(dev, 0xe, 0x8016);
++        phy_write(dev, 0xd, 0x4007);
++
++        val = phy_read(dev, 0xe);
++        val &= 0xffe7;
++        val |= 0x18;
++        phy_write(dev, 0xe, val);
++
++        /* introduce tx clock delay */
++        phy_write(dev, 0x1d, 0x5);
++        val = phy_read(dev, 0x1e);
++        val |= 0x0100;
++        phy_write(dev, 0x1e, val);
++
++        /*check phy power*/
++        val = phy_read(dev, 0x0);
++        if (val & BMCR_PDOWN)
++                phy_write(dev, 0x0, val & ~BMCR_PDOWN);
++
++        return 0;
+ }
+ 
+ #define PHY_ID_AR8035 0x004dd072
+-- 
+2.7.4
+

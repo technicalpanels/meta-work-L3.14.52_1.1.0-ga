@@ -1,1 +1,1 @@
-KERNEL_DEVICETREE = "mx6ulipc.dtb mx6ulipc-1g.dtb"
+KERNEL_DEVICETREE = "imx6ul-eisd.dtb"

@@ -13,9 +13,10 @@ DEPENDS = "qtbase"
 HT_SRC ?= "git://github.com/leavs/network.git;protocol=https"
 SRC_URI = "${HT_SRC};branch=master \
 	   file://wifi.desktop \
+	   file://wpa_supplicant.conf \
 	   file://wifi.png"
 
-SRCREV = "e7bcda666aa4a7ee41db07b19a2763737908bdf6"
+SRCREV = "8e164e33bc0a0c104d15745739e96291276903b7"
 
 S = "${WORKDIR}/git"
 
@@ -28,8 +29,11 @@ do_install() {
 #Desktop and pixmaps
     install -d ${D}${datadir}/applications
     install -d ${D}${datadir}/pixmaps
+    install -d ${D}/etc
     cp -ar ${WORKDIR}/wifi.desktop ${D}${datadir}/applications/
     cp -ar ${WORKDIR}/wifi.png ${D}${datadir}/pixmaps/
+#Chipsee default wifi config
+    cp -ar ${WORKDIR}/wpa_supplicant.conf ${D}/etc/
 }
 
 #Disable QA Issue: Files/directories were installed but not shipped

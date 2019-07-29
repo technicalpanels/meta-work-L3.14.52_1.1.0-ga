@@ -7,5 +7,6 @@ SRC_URI +="\
 	file://0004-Add-new-arch.patch \
 	file://0005-update-DCD.patch \
 	file://0006-Add-7L-LCD-support.patch \
+	file://0007-Add-eMMC-Test-bootcmd-support.patch \
 "
 UBOOT_CONFIG[sd] = "mx6qeisd_config,sdcard"

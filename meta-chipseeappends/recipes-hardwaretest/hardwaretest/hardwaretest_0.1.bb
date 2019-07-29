@@ -8,15 +8,15 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 PR = "r0"
 
-DEPENDS = "chipseeinit qtbase qtserialport"
+DEPENDS = "chipseeinit qtbase qtserialport lcdtester"
 
-SRCBRANCH = "${@base_contains('MACHINE', 'imx6qsabresd', 'imx6q', base_contains('MACHINE', 'imx6dlsabresd', 'imx6q', 'imx6u', d), d)}"
 HT_SRC ?= "git://github.com/leavs/hardwaretest.git;protocol=https"
+SRCBRANCH = "master"
+SRCREV = "9fb6e36bcccae3d9281124410fcfa564ae24c17d"
+
 SRC_URI = "${HT_SRC};branch=${SRCBRANCH} \
            file://hardwaretest.desktop \
            file://test.png"
-
-SRCREV = "224755738a1810ce5f310a9b51f3401ba28cc1de"
 
 S = "${WORKDIR}/git"
 

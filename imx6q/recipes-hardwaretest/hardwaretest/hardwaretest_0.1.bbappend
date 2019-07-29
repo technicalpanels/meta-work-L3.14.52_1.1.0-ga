@@ -1,0 +1,2 @@
+#SRCBRANCH = 'imx6q'
+#SRCREV = 'd311757c534e26c489c0af5ca3be6c621c5cb862'
