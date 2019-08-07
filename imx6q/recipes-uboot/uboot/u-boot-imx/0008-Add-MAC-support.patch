@@ -1,0 +1,25 @@
+From 44b6a0937dd07f6ff75fa640b503170bfdae5d65 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Wed, 7 Aug 2019 10:11:55 +0800
+Subject: [PATCH] Add MAC support
+
+---
+ include/configs/mx6eisd_common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/configs/mx6eisd_common.h b/include/configs/mx6eisd_common.h
+index 7290f43..2444570 100644
+--- a/include/configs/mx6eisd_common.h
++++ b/include/configs/mx6eisd_common.h
+@@ -224,7 +224,7 @@
+ 	"displayargs=video=mxcfb0:dev=" DDEV ",if=" INTERFACE " " \
+ 		"video=mxcfb1:off video=mxcfb2:off size=" PANEL "\0" \
+ 	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} " \
+-		"root=${mmcroot} ${displayargs}\0" \
++		"root=${mmcroot} ${displayargs} fec.macaddr=${macaddr}\0" \
+ 	"loadbootscript=" \
+ 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
+ 	"bootscript=echo Running bootscript from mmc ...; " \
+-- 
+2.7.4
+
