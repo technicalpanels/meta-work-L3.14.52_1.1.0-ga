@@ -17,5 +17,4 @@ IMAGE_INSTALL_append = " openssh-sftp-server \
 			hardwaretest \
 			hardwaretest-serial \
 			lcdtester \
-			packagegroup-qt5-webengine \	
 			network"
