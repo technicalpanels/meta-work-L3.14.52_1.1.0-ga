@@ -33,6 +33,7 @@ do_install() {
     install -d ${D}${datadir}/applications
     install -d ${D}${datadir}/pixmaps
     install -d ${D}/etc
+    install -d ${D}/lib/firmware
     cp -ar ${WORKDIR}/wifi.desktop ${D}${datadir}/applications/
     cp -ar ${WORKDIR}/wifi.png ${D}${datadir}/pixmaps/
 #Chipsee default wifi config
