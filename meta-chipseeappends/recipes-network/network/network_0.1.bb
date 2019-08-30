@@ -44,4 +44,4 @@ do_install() {
 }
 
 #Disable QA Issue: Files/directories were installed but not shipped
-#FILES_${PN} += "/usr/hardwaretest/*"
+FILES_${PN} += "/lib/firmware/*"
