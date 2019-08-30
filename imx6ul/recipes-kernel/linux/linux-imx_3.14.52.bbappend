@@ -14,6 +14,7 @@ SRC_URI +="file://0001-Chipsee-IMX6ULIPC-Port.patch \
 	   file://0012-Modify-DCLK-pol-to-0.patch \
 	   file://0013-Modify-Red-Led-to-mmc1-trigger-and-limit-usdhc1-to-no-1-8-v-feature.patch \
 	   file://0014-Add-RTL8723BU-BT-Support.patch \
+	   file://0015-Remove-C42-and-Change-DOTCTL_POL-to-1.patch \
 "
 
 KERNEL_DEVICETREE = "imx6ul-eisd.dtb"

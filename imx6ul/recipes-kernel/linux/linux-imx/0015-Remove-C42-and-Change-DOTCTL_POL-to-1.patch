@@ -1,0 +1,25 @@
+From c7bb25073df0a6177cdf12d4f6d3756a00a34c24 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Fri, 16 Aug 2019 18:25:38 +0800
+Subject: [PATCH] Remove C42 and Change DOTCTL_POL to 1
+
+---
+ arch/arm/boot/dts/imx6ul-eisd.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/imx6ul-eisd.dts b/arch/arm/boot/dts/imx6ul-eisd.dts
+index 1ae7158..b7a2a33 100644
+--- a/arch/arm/boot/dts/imx6ul-eisd.dts
++++ b/arch/arm/boot/dts/imx6ul-eisd.dts
+@@ -182,7 +182,7 @@
+ 				hsync-active = <0>;
+ 				vsync-active = <0>;
+ 				de-active = <1>;
+-				pixelclk-active = <1>;
++				pixelclk-active = <0>;	/* Remove C42, DOTCLK_POL=1, memtool -32 0x021c8070=13300005 */
+ 			};
+ 		};
+ 	};
+-- 
+2.7.4
+
