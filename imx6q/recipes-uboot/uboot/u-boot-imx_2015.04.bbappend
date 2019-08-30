@@ -9,5 +9,9 @@ SRC_URI +="\
 	file://0006-Add-7L-LCD-support.patch \
 	file://0007-Add-eMMC-Test-bootcmd-support.patch \
 	file://0008-Add-MAC-support.patch \
+	file://0009-Add-self-update-features.patch \
+	file://0010-update-for-clearly-code.patch \
+	file://0011-Add-BOE-DV185WHM-NM1-18.5-Support.patch \
 "
 UBOOT_CONFIG[sd] = "mx6qeisd_config,sdcard"
+UBOOT_CONFIG[mfgtool] = "mx6qeisd_config"

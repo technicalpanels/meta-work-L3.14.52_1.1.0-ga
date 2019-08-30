@@ -1,0 +1,92 @@
+From c4ac4345bcb93b7f4c6df4dcbbe33e86d11ef218 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Sat, 24 Aug 2019 10:18:58 +0800
+Subject: [PATCH] Add self update features. You can update your system by
+ bootable TF card in eMMC boot mode. Note: your TF card must has must been
+ made by the legal prebuilt images from Chipsee.
+
+---
+ include/configs/eisd.h           |  5 +++++
+ include/configs/mx6eisd_common.h | 27 +++++++++++++--------------
+ 2 files changed, 18 insertions(+), 14 deletions(-)
+
+diff --git a/include/configs/eisd.h b/include/configs/eisd.h
+index 61b448f..e442a70 100644
+--- a/include/configs/eisd.h
++++ b/include/configs/eisd.h
+@@ -14,6 +14,11 @@
+ /* #define CONFIG_EMMCTEST */
+ 
+ /*
++ *  Used for download image in eMMC boot mode
++ */
++/* #define CONFIG_SELFUPDATE */
++
++/*
+  *  Chipsee Custom Macro
+  *  10H: Hight light with pwm4 backlight
+  *  12L: Low res with 800600 resolution
+diff --git a/include/configs/mx6eisd_common.h b/include/configs/mx6eisd_common.h
+index 2444570..835d223 100644
+--- a/include/configs/mx6eisd_common.h
++++ b/include/configs/mx6eisd_common.h
+@@ -187,6 +187,11 @@
+         "setenv mmcroot /dev/mmcblk3p2 rootwait rw; else setenv mmcdev 0; " \
+         "setenv mmcroot /dev/mmcblk1p2 rootwait rw; fi; \0"
+ 
++#define SELFUPDATE_ENV \
++        "mmcselect=if fatload mmc 0:1 ${loadaddr} ${image}; then setenv mmcdev 0; " \
++        "setenv mmcroot /dev/mmcblk1p2 rootwait rw; else setenv mmcdev 2; " \
++        "setenv mmcroot /dev/mmcblk3p2 rootwait rw; fi; \0"
++
+ #define CONFIG_EXTRA_ENV_SETTINGS \
+ 	CONFIG_MFG_ENV_SETTINGS \
+ 	"epdc_waveform=epdc_splash.bin\0" \
+@@ -220,6 +225,7 @@
+ 		"fi\0" \
+ 	EMMC_ENV	  \
+ 	EMMCTEST_ENV \
++	SELFUPDATE_ENV \
+ 	"smp=" CONFIG_SYS_NOSMP "\0"\
+ 	"displayargs=video=mxcfb0:dev=" DDEV ",if=" INTERFACE " " \
+ 		"video=mxcfb1:off video=mxcfb2:off size=" PANEL "\0" \
+@@ -272,21 +278,15 @@
+ 		"fi;\0"
+ 
+ #if defined(CONFIG_EMMCTEST)
+-#define CONFIG_BOOTCOMMAND \
+-	"run mmcscan;" \
+-        "mmc dev ${mmcdev};" \
+-        "if mmc rescan; then " \
+-                "if run loadbootscript; then " \
+-                "run bootscript; " \
+-                "else " \
+-                        "if run loadimage; then " \
+-                                "run mmcboot; " \
+-                        "else run netboot; " \
+-                        "fi; " \
+-                "fi; " \
+-        "else run netboot; fi"
++#define BOOTCOMMAND_APPENV "run mmcscan;"
++#elif defined(CONFIG_SELFUPDATE)
++#define BOOTCOMMAND_APPENV "run mmcselect;"
+ #else
++#define BOOTCOMMAND_APPENV ""
++#endif
++
+ #define CONFIG_BOOTCOMMAND \
++	BOOTCOMMAND_APPENV \
+ 	"mmc dev ${mmcdev};" \
+ 	"if mmc rescan; then " \
+ 		"if run loadbootscript; then " \
+@@ -299,7 +299,6 @@
+ 		"fi; " \
+ 	"else run netboot; fi"
+ #endif
+-#endif
+ 
+ #define CONFIG_ARP_TIMEOUT     200UL
+ 
+-- 
+2.7.4
+

@@ -1,0 +1,67 @@
+From 3deeb86dd26c756af9c5c63aef055a50cd341005 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Mon, 26 Aug 2019 10:15:09 +0800
+Subject: [PATCH] Add (BOE)DV185WHM-NM1 18.5 Support
+
+---
+ board/chipsee/mx6eisd/mx6eisd.c  |  2 +-
+ include/configs/eisd.h           |  4 ++++
+ include/configs/mx6eisd_common.h | 14 ++++++++++++++
+ 3 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/board/chipsee/mx6eisd/mx6eisd.c b/board/chipsee/mx6eisd/mx6eisd.c
+index aba0e6a..5b87b8d 100644
+--- a/board/chipsee/mx6eisd/mx6eisd.c
++++ b/board/chipsee/mx6eisd/mx6eisd.c
+@@ -1166,7 +1166,7 @@ static void setup_lvds_iomux(void)
+ #elif defined(LVDS10H) || defined(LVDS12L) || defined(LVDS120) || defined(LVDS150) || defined(LVDS170) || defined(LVDS190)
+         .pwm_id = 3,
+         .pwmo_invert = 1,
+-#elif defined(LVDS180) || defined(LVDS215) || defined(LVDS280) || defined(LVDS550)
++#elif defined(LVDS180) || defined(LVDS185) || defined(LVDS215) || defined(LVDS280) || defined(LVDS550)
+         .pwm_id = 3,
+         .pwmo_invert = 0,
+ #endif
+diff --git a/include/configs/eisd.h b/include/configs/eisd.h
+index e442a70..31c370b 100644
+--- a/include/configs/eisd.h
++++ b/include/configs/eisd.h
+@@ -67,6 +67,10 @@
+ #define PANEL   "17"
+ #define RES    "12801024"
+ #define INTERFACE "RGB24"
++#elif defined(LVDS185)
++#define PANEL   "18"
++#define RES    "1366768"
++#define INTERFACE "RGB24"
+ #elif defined(LVDS190)
+ #define PANEL   "19"
+ #define RES    "1440900"
+diff --git a/include/configs/mx6eisd_common.h b/include/configs/mx6eisd_common.h
+index 34046f9..5c36d6f 100644
+--- a/include/configs/mx6eisd_common.h
++++ b/include/configs/mx6eisd_common.h
+@@ -671,6 +671,20 @@
+     #define DISPLAY_PIX_CLOCK                       78000000
+ #endif
+ 
++#ifdef LVDS185
++    #define DISPLAY_WIDTH                           1366
++    #define DISPLAY_HEIGHT                          768
++    #define DISPLAY_BPP                             32
++    #define DISPLAY_IF_BPP                          24  /* RGB24 interface */
++    #define DISPLAY_HSYNC_START                     50
++    #define DISPLAY_HSYNC_END                       50
++    #define DISPLAY_HSYNC_WIDTH                     94
++    #define DISPLAY_VSYNC_START                     10
++    #define DISPLAY_VSYNC_END                       10
++    #define DISPLAY_VSYNC_WIDTH                     18
++    #define DISPLAY_PIX_CLOCK                       75441600
++#endif
++
+ #ifdef LVDS190
+     #define DISPLAY_WIDTH                           1440
+     #define DISPLAY_HEIGHT                          900
+-- 
+2.7.4
+

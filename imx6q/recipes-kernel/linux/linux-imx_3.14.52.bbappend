@@ -27,6 +27,7 @@ SRC_URI +="file://0001-keep-logo-from-uboot-to-kernel.patch \
 	   file://0025-Add-Quectel-EC20-R2.0-Support-And-Remove-CRYPTO_SHA1.patch \
 	   file://0026-Add-7L-LCD-Support.patch \
 	   file://0027-Fix-1000Mbps-ethernet-upload-speed-slow-issue.patch \
+	   file://0028-Add-BOE-DV185WHM-NM1-18.5-Support.patch \
 "
 KERNEL_DEVICETREE ="imx6q-eisd-1024600.dtb \
 		     imx6q-eisd-1024600-no-uart-dma.dtb \
@@ -46,6 +47,8 @@ KERNEL_DEVICETREE ="imx6q-eisd-1024600.dtb \
 		     imx6q-eisd-800600-logo.dtb \
   	             imx6q-eisd-1024768.dtb \
 		     imx6q-eisd-1024768-logo.dtb \
+  	             imx6q-eisd-1366768.dtb \
+		     imx6q-eisd-1366768-logo.dtb \
   	             imx6q-eisd-12801024.dtb \
 		     imx6q-eisd-12801024-logo.dtb \
   	             imx6q-eisd-19201080.dtb \
