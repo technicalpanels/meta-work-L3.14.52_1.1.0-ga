@@ -1,0 +1,29 @@
+From 65693d12aa620eb09d25038d8ee66c99aedb2af3 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Tue, 17 Sep 2019 13:04:09 +0800
+Subject: [PATCH] Repair ft touchscreen driver
+
+---
+ drivers/input/touchscreen/ft5x06_ts.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/input/touchscreen/ft5x06_ts.c b/drivers/input/touchscreen/ft5x06_ts.c
+index 388a878..dd87686 100644
+--- a/drivers/input/touchscreen/ft5x06_ts.c
++++ b/drivers/input/touchscreen/ft5x06_ts.c
+@@ -435,10 +435,12 @@ static irqreturn_t ts_interrupt(int irq, void *id)
+ /*#if defined(FT5306) || defined(FT5206) || defined(FT5306_800480)
+ #else*/
+ 					if (ts->version == 5526 || ts->version == 5506 || ts->version == 5416)
++					{
+ 						if (points[i].y > ts->max_y)
+ 							points[i].x = ts->max_y;
+ 						if (points[i].y > 767)
+ 							points[i].y = points[i].y*600/800+191;
++					}
+ /*#endif*/
+ 					p += 6;
+ 				}
+-- 
+2.7.4
+

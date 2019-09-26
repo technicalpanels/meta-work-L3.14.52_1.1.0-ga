@@ -28,6 +28,8 @@ SRC_URI +="file://0001-keep-logo-from-uboot-to-kernel.patch \
 	   file://0026-Add-7L-LCD-Support.patch \
            file://0027-Fix-1000Mbps-ethernet-upload-speed-slow-issue.patch \
 	   file://0028-Add-BOE-DV185WHM-NM1-18.5-Support.patch \
+	   file://0029-Add-19-size-support.patch \
+	   file://0030-Repair-ft-touchscreen-driver.patch \
 "
 KERNEL_DEVICETREE +="imx6dl-eisd-1024600.dtb \
                      imx6dl-eisd-1024600-logo.dtb \
@@ -47,6 +49,8 @@ KERNEL_DEVICETREE +="imx6dl-eisd-1024600.dtb \
 		     imx6dl-eisd-1366768-logo.dtb \
 		     imx6dl-eisd-12801024.dtb \
 		     imx6dl-eisd-12801024-logo.dtb \
+		     imx6dl-eisd-1440900.dtb \
+		     imx6dl-eisd-1440900-logo.dtb \
 		     imx6dl-eisd-19201080.dtb \
 		     imx6dl-eisd-19201080-logo.dtb \
 		     imx6dl-eisd-injectronic.dtb"

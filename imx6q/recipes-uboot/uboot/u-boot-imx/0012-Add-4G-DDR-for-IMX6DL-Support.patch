@@ -1,0 +1,255 @@
+From 6d40e959f2efb1ce7b8369f3e18b33703e577971 Mon Sep 17 00:00:00 2001
+From: Xiaoqiang Liu <leavs_o@126.com>
+Date: Mon, 9 Sep 2019 13:47:50 +0800
+Subject: [PATCH] Add 4G DDR for IMX6DL Support
+
+---
+ board/chipsee/mx6eisd/mx6dl_16x_mt41K512.cfg | 142 +++++++++++++++++++++++++++
+ board/chipsee/mx6eisd/mx6dleisd.cfg          |  25 ++++-
+ configs/mx6dleisd_4g_defconfig               |   7 ++
+ include/configs/mx6eisd.h                    |   4 +-
+ 4 files changed, 174 insertions(+), 4 deletions(-)
+ create mode 100644 board/chipsee/mx6eisd/mx6dl_16x_mt41K512.cfg
+ create mode 100644 configs/mx6dleisd_4g_defconfig
+
+diff --git a/board/chipsee/mx6eisd/mx6dl_16x_mt41K512.cfg b/board/chipsee/mx6eisd/mx6dl_16x_mt41K512.cfg
+new file mode 100644
+index 0000000..945a419
+--- /dev/null
++++ b/board/chipsee/mx6eisd/mx6dl_16x_mt41K512.cfg
+@@ -0,0 +1,142 @@
++/*
++ * Copyright (C) 2014-2015 Freescale Semiconductor, Inc.
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ *
++ * Refer docs/README.imxmage for more details about how-to configure
++ * and create imximage boot image
++ *
++ * The syntax is taken as close as possible with the kwbimage
++ */
++
++#define __ASSEMBLY__
++#include <config.h>
++/* image version */
++
++IMAGE_VERSION 2
++
++/*
++ * Boot Device : one of
++ * spi, sd (the board has no nand neither onenand)
++ */
++
++BOOT_FROM	sd
++#ifdef CONFIG_USE_PLUGIN
++/*PLUGIN    plugin-binary-file    IRAM_FREE_START_ADDR*/
++PLUGIN board/freescale/mx6sabresd/plugin.bin 0x00907000
++#else
++
++#ifdef CONFIG_SECURE_BOOT
++CSF CONFIG_CSF_SIZE
++#endif
++
++/*
++ * Device Configuration Data (DCD)
++ *
++ * Each entry must have the format:
++ * Addr-type           Address        Value
++ *
++ * where:
++ *	Addr-type register length (1,2 or 4 bytes)
++ *	Address	  absolute address of the register
++ *	value	  value to be stored in the register
++ */
++DATA 4	0x020e0774 0x000C0000
++DATA 4	0x020e0754 0x00000000
++DATA 4	0x020e04ac 0x00000030
++DATA 4	0x020e04b0 0x00000030
++DATA 4	0x020e0464 0x00000030
++DATA 4	0x020e0490 0x00000030
++DATA 4	0x020e074c 0x00000030
++DATA 4	0x020e0494 0x00000030
++DATA 4	0x020e04a0 0x00000000
++DATA 4	0x020e04b4 0x00000030
++DATA 4	0x020e04b8 0x00000030
++DATA 4	0x020e076c 0x00000030
++DATA 4	0x020e0750 0x00020000
++DATA 4	0x020e04bc 0x00000018
++DATA 4	0x020e04c0 0x00000018
++DATA 4	0x020e04c4 0x00000018
++DATA 4	0x020e04c8 0x00000018
++DATA 4	0x020e04cc 0x00000018
++DATA 4	0x020e04d0 0x00000018
++DATA 4	0x020e04d4 0x00000018
++DATA 4	0x020e04d8 0x00000018
++DATA 4	0x020e0760 0x00020000
++DATA 4	0x020e0764 0x00000018
++DATA 4	0x020e0770 0x00000018
++DATA 4	0x020e0778 0x00000018
++DATA 4	0x020e077c 0x00000018
++DATA 4	0x020e0780 0x00000018
++DATA 4	0x020e0784 0x00000018
++DATA 4	0x020e078c 0x00000018
++DATA 4	0x020e0748 0x00000018
++DATA 4	0x020e0470 0x00000018
++DATA 4	0x020e0474 0x00000018
++DATA 4	0x020e0478 0x00000018
++DATA 4	0x020e047c 0x00000018
++DATA 4	0x020e0480 0x00000018
++DATA 4	0x020e0484 0x00000018
++DATA 4	0x020e0488 0x00000018
++DATA 4	0x020e048c 0x00000018
++DATA 4	0x021b0800 0xa1390003
++DATA 4	0x021b080c 0x0047004F
++DATA 4	0x021b0810 0x0033003E
++DATA 4	0x021b480c 0x0017001E
++DATA 4	0x021b4810 0x00270032
++DATA 4	0x021b083c 0x4254024C
++DATA 4	0x021b0840 0x0228022C
++DATA 4	0x021b483c 0x421C021C
++DATA 4	0x021b4840 0x021C0228
++DATA 4	0x021b0848 0x42484646
++DATA 4	0x021b4848 0x46444A3E
++DATA 4	0x021b0850 0x38342E2E
++DATA 4	0x021b4850 0x3232302A
++DATA 4	0x021b081c 0x33333333
++DATA 4	0x021b0820 0x33333333
++DATA 4	0x021b0824 0x33333333
++DATA 4	0x021b0828 0x33333333
++DATA 4	0x021b481c 0x33333333
++DATA 4	0x021b4820 0x33333333
++DATA 4	0x021b4824 0x33333333
++DATA 4	0x021b4828 0x33333333
++DATA 4	0x021b08b8 0x00000800
++DATA 4	0x021b48b8 0x00000800
++DATA 4	0x021b0004 0x0002002D
++DATA 4	0x021b0008 0x00333040
++DATA 4	0x021b000c 0x8B8F52F3
++DATA 4	0x021b0010 0xB66D8B63
++DATA 4	0x021b0014 0x01FF00DB
++DATA 4	0x021b0018 0x00011740
++DATA 4	0x021b001c 0x00008000
++DATA 4	0x021b002c 0x000026d2
++DATA 4	0x021b0030 0x008F1023
++DATA 4	0x021b0040 0x0000007F
++DATA 4	0x021b0000 0x851A0000
++DATA 4	0x021b001c 0x02008032
++DATA 4	0x021b001c 0x00008033
++DATA 4	0x021b001c 0x00048031
++DATA 4	0x021b001c 0x15208030
++DATA 4  0x021b001c 0x04008040
++DATA 4	0x021b0020 0x00007800
++DATA 4	0x021b0818 0x00022227
++DATA 4	0x021b4818 0x00022227
++DATA 4	0x021b0004 0x0002556D
++DATA 4	0x021b0404 0x00011006
++DATA 4	0x021b001c 0x00000000
++
++/* set the default clock gate to save power */
++DATA 4 0x020c4068 0x00C03F3F
++DATA 4 0x020c406c 0x0030FC03
++DATA 4 0x020c4070 0x0FFFC000
++DATA 4 0x020c4074 0x3FF00000
++DATA 4 0x020c4078 0x00FFF300
++DATA 4 0x020c407c 0x0F0000C3
++DATA 4 0x020c4080 0x000003FF
++
++/* enable AXI cache for VDOA/VPU/IPU */
++DATA 4 0x020e0010 0xF00000CF
++/* set IPU AXI-id0 Qos=0xf(bypass) AXI-id1 Qos=0x7 */
++DATA 4 0x020e0018 0x007F007F
++DATA 4 0x020e001c 0x007F007F
++#endif
+diff --git a/board/chipsee/mx6eisd/mx6dleisd.cfg b/board/chipsee/mx6eisd/mx6dleisd.cfg
+index c1e9606..241ce48 100644
+--- a/board/chipsee/mx6eisd/mx6dleisd.cfg
++++ b/board/chipsee/mx6eisd/mx6dleisd.cfg
+@@ -94,7 +94,7 @@ DATA 4	0x021b0848 0x424C4848
+ DATA 4	0x021b4848 0x4A484C40
+ DATA 4	0x021b0850 0x3A322E32
+ DATA 4	0x021b4850 0x3234322C
+-#else
++#elif (CONFIG_DRAM_SIZE == 2048)
+ DATA 4	0x021b080c 0x003E0048
+ DATA 4	0x021b0810 0x00300038
+ DATA 4	0x021b480c 0x0010001A
+@@ -107,6 +107,19 @@ DATA 4	0x021b0848 0x444A4C46
+ DATA 4	0x021b4848 0x4C464E46
+ DATA 4	0x021b0850 0x3A343030
+ DATA 4	0x021b4850 0x3634322E
++#else
++DATA 4	0x021b080c 0x0047004F
++DATA 4	0x021b0810 0x0033003E
++DATA 4	0x021b480c 0x0017001E
++DATA 4	0x021b4810 0x00270032
++DATA 4	0x021b083c 0x4254024C
++DATA 4	0x021b0840 0x0228022C
++DATA 4	0x021b483c 0x421C021C
++DATA 4	0x021b4840 0x021C0228
++DATA 4	0x021b0848 0x42484646
++DATA 4	0x021b4848 0x46444A3E
++DATA 4	0x021b0850 0x38342E2E
++DATA 4	0x021b4850 0x3232302A
+ #endif
+ 
+ DATA 4	0x021b081c 0x33333333
+@@ -124,8 +137,10 @@ DATA 4	0x021b0008 0x00333040
+ 
+ #if (CONFIG_DRAM_SIZE == 1024)
+ DATA 4	0x021b000c 0x3F4352F3
+-#else
++#elif (CONFIG_DRAM_SIZE == 2048)
+ DATA 4	0x021b000c 0x676B52F3
++#else
++DATA 4	0x021b000c 0x8B8F52F3
+ #endif
+ 
+ DATA 4	0x021b0010 0xB66D8B63
+@@ -138,10 +153,14 @@ DATA 4	0x021b002c 0x000026d2
+ DATA 4	0x021b0030 0x00431023
+ DATA 4	0x021b0040 0x00000027
+ DATA 4	0x021b0000 0x831A0000
+-#else
++#elif (CONFIG_DRAM_SIZE == 2048)
+ DATA 4	0x021b0030 0x006B1023
+ DATA 4	0x021b0040 0x00000047
+ DATA 4	0x021b0000 0x841A0000
++#else
++DATA 4	0x021b0030 0x008F1023
++DATA 4	0x021b0040 0x0000007F
++DATA 4	0x021b0000 0x851A0000
+ #endif
+ 
+ DATA 4	0x021b001c 0x02008032
+diff --git a/configs/mx6dleisd_4g_defconfig b/configs/mx6dleisd_4g_defconfig
+new file mode 100644
+index 0000000..953e261
+--- /dev/null
++++ b/configs/mx6dleisd_4g_defconfig
+@@ -0,0 +1,7 @@
++CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/chipsee/mx6eisd/mx6dleisd.cfg,MX6DL,DRAM_SIZE=4096"
++CONFIG_ARM=y
++CONFIG_TARGET_MX6EISD=y
++CONFIG_SYS_MALLOC_F=y
++CONFIG_SYS_MALLOC_F_LEN=0x400
++CONFIG_DM=y
++CONFIG_DM_THERMAL=y
+diff --git a/include/configs/mx6eisd.h b/include/configs/mx6eisd.h
+index d62b0d3..9e0ebbf 100644
+--- a/include/configs/mx6eisd.h
++++ b/include/configs/mx6eisd.h
+@@ -34,8 +34,10 @@
+ #define CONFIG_DEFAULT_FDT_FILE	"imx6dl-eisd.dtb"
+ #if (CONFIG_DRAM_SIZE == 1024)
+ #define PHYS_SDRAM_SIZE         (1u * 1024 * 1024 * 1024)
+-#else
++#elif (CONFIG_DRAM_SIZE == 2048)
+ #define PHYS_SDRAM_SIZE         (2u * 1024 * 1024 * 1024)
++#else
++#define PHYS_SDRAM_SIZE         (4u * 1024 * 1024 * 1024)
+ #endif
+ #elif defined(CONFIG_MX6SOLO)
+ #define CONFIG_DEFAULT_FDT_FILE	"imx6dl-eisd.dtb"
+-- 
+2.7.4
+
