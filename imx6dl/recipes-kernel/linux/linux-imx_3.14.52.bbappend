@@ -54,3 +54,6 @@ KERNEL_DEVICETREE +="imx6dl-eisd-1024600.dtb \
 		     imx6dl-eisd-19201080.dtb \
 		     imx6dl-eisd-19201080-logo.dtb \
 		     imx6dl-eisd-injectronic.dtb"
+
+# Use config after patched
+addtask copy_defconfig after do_patch before do_configure

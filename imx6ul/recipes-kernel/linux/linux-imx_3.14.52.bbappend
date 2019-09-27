@@ -18,3 +18,6 @@ SRC_URI +="file://0001-Chipsee-IMX6ULIPC-Port.patch \
 "
 
 KERNEL_DEVICETREE = "imx6ul-eisd.dtb"
+
+# Use config after patched
+addtask copy_defconfig after do_patch before do_configure

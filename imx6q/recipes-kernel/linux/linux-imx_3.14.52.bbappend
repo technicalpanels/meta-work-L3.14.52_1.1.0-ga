@@ -57,3 +57,6 @@ KERNEL_DEVICETREE ="imx6q-eisd-1024600.dtb \
 		     imx6q-eisd-1440900-logo.dtb \
   	             imx6q-eisd-19201080.dtb \
 		     imx6q-eisd-19201080-logo.dtb"
+
+# Use config after patched
+addtask copy_defconfig after do_patch before do_configure
