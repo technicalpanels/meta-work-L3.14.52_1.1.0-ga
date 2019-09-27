@@ -69,7 +69,7 @@ Build scenarios
 
 **4. Add meta-work bblayers to build-x11/conf/bblayers.conf, like follow:**::
 
-    BBLAYERS\= " \
+    BBLAYERS= " \
             ...... \
             ${BSPDIR}/sources/meta-work/imx6q \
     "
