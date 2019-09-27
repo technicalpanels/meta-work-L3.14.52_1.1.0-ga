@@ -4,45 +4,43 @@ Chipsee Yocto layer for L3.14.52 User Guide
 Build environment
 -----------------
 
- 1.Host packages
+1.Host packages
 
- A Yocto Project build requires that some packages be installed for the build that are documented under the Yocto Project.
- You can go to `Yocto Project Quick Start`_ and check for the packages that must be installed for your build machine.
+A Yocto Project build requires that some packages be installed for the build that are documented under the Yocto Project.
+You can go to `Yocto Project Quick Start`_ and check for the packages that must be installed for your build machine.
 
- Essential Yocto Project host packages are::
+ 1.1. Essential Yocto Project host packages are::
 
     $ sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
     build-essential chrpath socat libsdl1.2-dev
 
- i.MX layers host packages for a Ubuntu 12.04 or 14.04 host setup are::
+ 1.2. i.MX layers host packages for a Ubuntu 12.04 or 14.04 host setup are::
 
     $ sudo apt-get install libsdl1.2-dev xterm sed cvs subversion coreutils texi2html \
     docbook-utils python-pysqlite2 help2man make gcc g++ desktop-file-utils \
     libgl1-mesa-dev libglu1-mesa-dev mercurial autoconf automake groff curl lzop asciidoc
 
- i.MX layers host packages for a Ubuntu 12.04 host setup only are::
+ 1.3. i.MX layers host packages for a Ubuntu 12.04 host setup only are::
 
     $ sudo apt-get install uboot-mkimage
 
- i.MX layers host packages for a Ubuntu 14.04 host setup only are::
+ 1.4. i.MX layers host packages for a Ubuntu 14.04 host setup only are::
 
     $ sudo apt-get install u-boot-tools
 
- 2. Setting up the repo utility
+2. Setting up the repo utility
 
- Create a bin folder in the home directory.::
+ 2.1. Create a bin folder in the home directory.::
 
     $ mkdir ~/bin (this step may not be needed if the bin folder already exists)
     $ curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
     $ chmod a+x ~/bin/repo
 
- Add the following line to the .bashrc file to ensure that the ~/bin folder is in your PATH variable.::
+ 2.2. Add the following line to the .bashrc file to ensure that the ~/bin folder is in your PATH variable.::
 
     $ export PATH=~/bin:$PATH
 
- 3. config your git
-
- Config your git like follow::
+3. config your git.::
 
     $ git config --global user.name "Your Name" 
     $ git config --global user.email "Your Email"
@@ -69,14 +67,14 @@ Build scenarios
 
  4. Add meta-work bblayers to build-x11/conf/bblayers.conf, like follow:::
 
-    BBLAYERS = " \
+    BBLAYERS = \" \
             ..... \
             ${BSPDIR}/sources/meta-work/imx6q \
-    "
+    \"
 
  5. Add follow to  build-x11/conf/local.conf
 
-::
+ ::
 
     #use u-boot-imx
     PREFERRED_PROVIDER_u-boot_mx6 = "u-boot-imx"
@@ -87,7 +85,7 @@ Build scenarios
 
  6. Build
 
-::
+ ::
 
    $ cd fsl-release-bsp
    $ source setup-environment build-x11
